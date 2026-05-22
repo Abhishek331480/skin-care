@@ -1,32 +1,94 @@
 const ProductCard = ({ product }) => {
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-pink-100 overflow-hidden hover:shadow-xl transition">
-      <div className="h-56 bg-pink-100 flex items-center justify-center">
-        <span className="text-pink-500 font-medium">Product Image</span>
+    <div
+      className="
+        group bg-white rounded-[2rem] overflow-hidden
+        border border-pink-100
+        shadow-sm hover:shadow-2xl
+        hover:-translate-y-2
+        transition-all duration-300
+      "
+    >
+      {/* Image */}
+      <div className="relative h-64 overflow-hidden bg-pink-50">
+        <img
+           src={product.images?.[0]}
+           alt={product.name}
+          className="
+            w-full h-full object-cover
+            group-hover:scale-110
+            transition-transform duration-500
+          "
+        />
+
+        {/* Category Badge */}
+        <span
+          className="
+            absolute top-4 left-4
+            bg-white/90 backdrop-blur-md
+            text-pink-600 text-xs font-semibold
+            px-4 py-2 rounded-full
+            shadow-sm
+          "
+        >
+          {product.category}
+        </span>
+
+        {/* Rating */}
+        <div
+          className="
+            absolute top-4 right-4
+            bg-black/70 backdrop-blur-md
+            text-white text-sm font-medium
+            px-3 py-1.5 rounded-full
+          "
+        >
+          ⭐ {product.rating}
+        </div>
       </div>
 
-      <div className="p-5 space-y-3">
-        <p className="text-sm text-pink-600 font-medium">
-          {product.category}
-        </p>
-
-        <h3 className="text-lg font-bold text-gray-900">
+      {/* Content */}
+      <div className="p-6">
+        <h3
+          className="
+            text-xl font-bold text-gray-900
+            group-hover:text-pink-600
+            transition
+          "
+        >
           {product.name}
         </h3>
 
-        <div className="flex items-center justify-between">
-          <p className="text-xl font-bold text-gray-900">
-            ₹{product.price}
-          </p>
+        <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+          Premium skincare product specially designed for glowing,
+          hydrated and healthy skin.
+        </p>
 
-          <p className="text-sm text-gray-600">
-            ⭐ {product.rating}
-          </p>
+        {/* Price + Button */}
+        <div className="mt-6 flex items-center justify-between">
+          <div>
+            <p className="text-2xl font-bold text-gray-900">
+              ₹{product.price}
+            </p>
+
+            <p className="text-sm text-green-600 font-medium">
+              In Stock
+            </p>
+          </div>
+
+          <button
+            className="
+              px-5 py-3 rounded-full
+              bg-pink-600 text-white
+              font-medium
+              hover:bg-pink-700
+              shadow-lg shadow-pink-200
+              transition-all
+            "
+          >
+            View Details
+          </button>
         </div>
-
-        <button className="w-full py-3 rounded-full bg-pink-600 text-white font-medium hover:bg-pink-700 transition">
-          Add to Cart
-        </button>
       </div>
     </div>
   );

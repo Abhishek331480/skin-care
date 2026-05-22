@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import productImage from "../assets/product-image1.jpg";
-
+import BestSeller from "../components/BestSeller";
+import SkinTypeSection from "../components/SkinTypeSection";
+import CustomerRating from "../components/CustomerRating"
 const Home = () => {
   return (
     <section className="min-h-[calc(100vh-82px)] bg-pink-50">
@@ -56,6 +58,9 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <BestSeller/>
+     <SkinTypeSection/>
+     <CustomerRating/>
     </section>
   );
 };

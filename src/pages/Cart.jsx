@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Trash2, ShoppingBag } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   removeFromCart,
   increaseQty,
@@ -39,12 +40,16 @@ const Cart = () => {
         <div className="lg:col-span-2 space-y-5">
           {cartItems.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="bg-white/90 backdrop-blur-xl border border-pink-100 rounded-[2rem] p-5 shadow-sm hover:shadow-xl transition flex flex-col sm:flex-row sm:items-center justify-between gap-5"
             >
               <div className="flex items-center gap-4">
-                <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-200 flex-shrink-0" />
-
+                {/* <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-200 flex-shrink-0"/> */}
+                 <img
+                  src={item.images?.[0]}
+                  alt={item.name}
+                  className="h-25 w-25 rounded-xl object-cover bg-pink-50 p-1"
+                />
                 <div>
                   <p className="text-sm font-semibold text-pink-600">
                     {item.category}
@@ -59,7 +64,7 @@ const Cart = () => {
               <div className="flex items-center justify-between sm:justify-end gap-5">
                 <div className="flex items-center gap-3 bg-pink-50 rounded-full px-3 py-2">
                   <button
-                    onClick={() => dispatch(decreaseQty(item.id))}
+                    onClick={() => dispatch(decreaseQty(item._id))}
                     className="h-8 w-8 rounded-full bg-white border border-pink-100 font-bold"
                   >
                     -
@@ -70,7 +75,7 @@ const Cart = () => {
                   </span>
 
                   <button
-                    onClick={() => dispatch(increaseQty(item.id))}
+                    onClick={() => dispatch(increaseQty(item._id))}
                     className="h-8 w-8 rounded-full bg-black text-white font-bold"
                   >
                     +
@@ -78,7 +83,7 @@ const Cart = () => {
                 </div>
 
                 <button
-                  onClick={() => dispatch(removeFromCart(item.id))}
+                  onClick={() => dispatch(removeFromCart(item._id))}
                   className="h-11 w-11 rounded-full border border-red-100 text-red-500 flex items-center justify-center hover:bg-red-50 transition"
                 >
                   <Trash2 size={18} />
@@ -119,9 +124,15 @@ const Cart = () => {
             </span>
           </div>
 
-          <button className="w-full py-4 rounded-full bg-black text-white font-semibold shadow-lg hover:bg-gray-900 transition">
+        
+          {/* <button className="w-full py-4 rounded-full bg-black text-white font-semibold shadow-lg hover:bg-gray-900 transition">
             Checkout
-          </button>
+          </button> */}
+          <button  className="w-full py-4 rounded-full bg-black text-white font-semibold shadow-lg hover:bg-gray-900 transition">
+           <Link to="/checkout">
+          Checkout
+        </Link>
+        </button>
 
           <button
             onClick={() => dispatch(clearCart())}
