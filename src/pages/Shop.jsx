@@ -17,15 +17,57 @@ const skinTypeFromUrl = searchParams.get("skinType");
 const [products, setProducts] = useState([]);
 const [loading, setLoading] = useState(true);
 
+//pagination
+const [currentPage, setCurrentPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
+
 useEffect(() => {
 
   const fetchProducts = async () => {
 
     try {
 
-      const res = await api.get("/products");
+      setLoading(true);
+    
+      const params = {};
+
+      if (
+        selectedCategory !== "All"
+      ) {
+        params.category =
+          selectedCategory;
+      }
+
+      if (searchTerm) {
+        params.search =
+          searchTerm;
+      }
+
+      if (skinTypeFromUrl) {
+        params.skinType =
+          skinTypeFromUrl;
+      }
+
+      const res = await api.get("/products", {
+  params: {
+    category:
+      selectedCategory !== "All"
+        ? selectedCategory
+        : undefined,
+
+    search: searchTerm || undefined,
+
+    skinType:
+      skinTypeFromUrl || undefined,
+
+    page: currentPage,
+
+    limit: 8,
+  },
+});
 
       setProducts(res.data.products);
+      setTotalPages(res.data.totalPages); 
 
     } catch (error) {
 
@@ -40,7 +82,12 @@ useEffect(() => {
 
   fetchProducts();
 
-}, []);
+}, [
+  selectedCategory,
+  searchTerm,
+  skinTypeFromUrl,
+  currentPage
+]);
 
 
 
@@ -104,7 +151,7 @@ useEffect(() => {
   });
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-white py-12">
+    <section className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-pink-50 py-12">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
@@ -205,7 +252,35 @@ useEffect(() => {
             ))}
           </div>
         )}
+          
       </div>
+      <div className="flex items-center justify-center gap-4 mt-12">
+
+  <button
+    disabled={currentPage === 1}
+    onClick={() =>
+      setCurrentPage((prev) => prev - 1)
+    }
+    className="px-5 py-3 rounded-full border border-pink-200 disabled:opacity-50"
+  >
+    Prev
+  </button>
+
+  {/* <span className="font-semibold">
+    Page {currentPage} of {totalPages}
+  </span> */}
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() =>
+      setCurrentPage((prev) => prev + 1)
+    }
+    className="px-5 py-3 rounded-full border border-pink-200 disabled:opacity-50"
+  >
+    Next
+  </button>
+
+</div>
     </section>
   );
 };
