@@ -7,7 +7,16 @@ import toast from "react-hot-toast";
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+   
 
+   const [search, setSearch] = useState("");
+   const [stockFilter, setStockFilter] = useState("ALL");
+   const stockTabs = [
+  "ALL",
+  "IN_STOCK",
+  "LOW_STOCK",
+  "OUT_OF_STOCK",
+];
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -25,6 +34,19 @@ const AdminProducts = () => {
       setLoading(false);
     }
   };
+
+  const filteredProducts = products.filter((product) => {
+  const matchesStock =
+    stockFilter === "ALL" ||
+    (stockFilter === "IN_STOCK" && product.stock > 5) ||
+    (stockFilter === "LOW_STOCK" &&
+      product.stock > 0 &&
+      product.stock <= 5) ||
+    (stockFilter === "OUT_OF_STOCK" &&
+      product.stock <= 0);
+
+  return matchesStock;
+});
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -80,7 +102,39 @@ const AdminProducts = () => {
         </Link>
       </div>
 
-      {products.length === 0 ? (
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  <input
+    type="text"
+    placeholder="Search products..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="w-full rounded-2xl border border-pink-100 bg-white px-5 py-4 outline-none focus:ring-4 focus:ring-pink-100 md:max-w-md"
+  />
+
+ <div className="flex flex-wrap gap-3 mt-4">
+  {stockTabs.map((status) => (
+    <button
+      key={status}
+      onClick={() => setStockFilter(status)}
+      className={`
+        rounded-2xl px-5 py-3 text-sm font-bold transition
+        ${
+          stockFilter === status
+            ? "bg-pink-600 text-white shadow-lg shadow-pink-200"
+            : "bg-white border border-pink-100 text-gray-600 hover:border-pink-300"
+        }
+      `}
+    >
+      {status === "ALL" && "All"}
+      {status === "IN_STOCK" && "In Stock"}
+      {status === "LOW_STOCK" && "Low Stock"}
+      {status === "OUT_OF_STOCK" && "Out of Stock"}
+    </button>
+  ))}
+</div>
+</div>
+
+      {filteredProducts.length === 0 ? (
         <div className="bg-white border border-pink-100 rounded-[2rem] p-12 text-center shadow-sm">
           <Package className="mx-auto text-pink-500 mb-4" size={48} />
           <h2 className="text-2xl font-bold text-gray-950">
@@ -102,7 +156,7 @@ const AdminProducts = () => {
           </div>
 
           <div className="divide-y divide-pink-100">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div
                 key={product._id}
                 className="grid md:grid-cols-[80px_1.5fr_1fr_1fr_1fr_140px] gap-4 px-6 py-5 items-center hover:bg-pink-50/40 transition"

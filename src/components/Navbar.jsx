@@ -1,6 +1,18 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, X, ShoppingBag, Heart, Sparkles } from "lucide-react";
+import { FaShoppingCart } from "react-icons/fa";
+import { RiCoupon3Line } from "react-icons/ri";
+import {
+  Menu,
+  X,
+  Heart,
+  Sparkles,
+  User,
+  Package,
+  LogOut,
+  ChevronDown,
+  Bell , Home
+} from "lucide-react";
 import { useSelector , useDispatch } from "react-redux";
 import { logoutUser } from "../store/slices/authSlice";
 import api from "../api/api";
@@ -8,7 +20,7 @@ import toast from "react-hot-toast";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-
+  const [unreadCount, setUnreadCount] = useState(0);
   //login logout code
 const { user, isAuthenticated } = useSelector(
   (state) => state.auth
@@ -21,13 +33,42 @@ const { user, isAuthenticated } = useSelector(
   const wishlistCount = wishlistItems.length;
 
   const [isOpen, setIsOpen] = useState(false);
-
+  const [openProfile, setOpenProfile] = useState(false);
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
+
+  const fetchUnreadNotifications = async () => {
+  try {
+    const res = await api.get("/notifications");
+    setUnreadCount(res.data.unreadCount);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+useEffect(() => {
+  if (user) {
+    fetchUnreadNotifications();
+  }
+}, [user]);
+
+useEffect(() => {
+  const handleNotificationUpdate = () => {
+    if (user) {
+      fetchUnreadNotifications();
+    }
+  };
+
+  window.addEventListener("notificationsUpdated", handleNotificationUpdate);
+
+  return () => {
+    window.removeEventListener("notificationsUpdated", handleNotificationUpdate);
+  };
+}, [user]);
 
   const handleLogout = async () => {
   try {
@@ -85,24 +126,12 @@ const { user, isAuthenticated } = useSelector(
 
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center gap-3">
-          <NavLink
-            to="/wishlist"
-            className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
-          >
-            <Heart size={21} />
-
-            {wishlistCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-pink-600 text-white text-[11px] font-bold flex items-center justify-center">
-                {wishlistCount}
-              </span>
-            )}
-          </NavLink>
-
+         
           <NavLink
             to="/cart"
             className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
           >
-            <ShoppingBag size={21} />
+            <FaShoppingCart size={21} />
 
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-black text-white text-[11px] font-bold flex items-center justify-center">
@@ -111,18 +140,94 @@ const { user, isAuthenticated } = useSelector(
             )}
           </NavLink>
 
-          {isAuthenticated ? (
-  <div className="flex items-center gap-3">
-    <NavLink to="/profile" className="font-medium text-gray-700">
-      {user?.username}
-    </NavLink>
+          <NavLink
+  to="/notifications"
+            className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition">
+  <Bell size={20} />
 
+  {unreadCount > 0 && (
+    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+      {unreadCount}
+    </span>
+  )}
+</NavLink>
+
+   {isAuthenticated ? (
+  <div className="relative">
     <button
-      onClick={handleLogout}
-      className="px-5 py-2 rounded-full bg-black text-white text-sm font-medium"
+      onClick={() => setOpenProfile(!openProfile)}
+      className="flex items-center gap-3 rounded-full border border-pink-100 bg-white px-3 py-1.5 shadow-sm hover:shadow-md transition"
     >
-      Logout
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-sm font-bold uppercase text-pink-400">
+        {user?.username?.charAt(0)}
+      </div>
+
+      <ChevronDown size={18} className="text-gray-700" />
     </button>
+
+    {openProfile && (
+      <div className="absolute right-0 top-14 z-50 w-72 rounded-3xl border border-pink-100 bg-white p-3 shadow-2xl">
+        
+        <NavLink
+          to="/profile"
+          onClick={() => setOpenProfile(false)}
+          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <User size={21} />
+          <span className="font-medium">My Profile</span>
+        </NavLink>
+
+         <NavLink
+  to="/my-addresses"
+   className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"><Home size={21} />
+          <span className="font-medium">My Address</span>
+</NavLink>
+
+        
+
+        <NavLink
+          to="/my-orders"
+          onClick={() => setOpenProfile(false)}
+          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <Package size={21} />
+          <span className="font-medium">Orders</span>
+        </NavLink>
+
+        <NavLink to="/my-coupons"
+        className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"><RiCoupon3Line size={21} />
+          <span className="font-medium">My Coupons</span>
+        </NavLink>
+
+       <NavLink
+          to="/wishlist"
+          onClick={() => setOpenProfile(false)}
+          className="flex items-center justify-between rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <div className="flex items-center gap-4">
+            <Heart size={21} />
+            <span className="font-medium">Wishlist</span>
+          </div>
+
+          {wishlistCount > 0 && (
+            <span className="rounded-full bg-pink-600 px-2 py-0.5 text-xs font-bold text-white">
+              {wishlistCount}
+            </span>
+          )}
+        </NavLink>
+ 
+        <button
+          onClick={() => {
+            setOpenProfile(false);
+            handleLogout();
+          }}
+          className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-red-600 hover:bg-red-50 transition"
+        >
+          <LogOut size={21} />
+          <span className="font-medium">Logout</span>
+        </button>
+      </div>
+    )}
   </div>
 ) : (
   <NavLink

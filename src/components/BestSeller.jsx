@@ -164,6 +164,12 @@ const isWishlisted = wishlistItems.some(
                   className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
 
+                {product.stock <= 0 && (
+  <span className="absolute left-4 top-16 rounded-full bg-red-500 px-4 py-2 text-sm font-bold text-white shadow-xl">
+    Out of Stock
+  </span>
+)}
+
                 {product.featured && (
                   <span className="absolute top-4 left-4 bg-pink-600 text-white text-xs font-semibold px-4 py-2 rounded-full">
                     Featured
@@ -243,14 +249,16 @@ const isWishlisted = wishlistItems.some(
                 {/* <button className="mt-5 w-full rounded-full bg-pink-600 text-white py-3 font-semibold hover:bg-pink-700 transition">
                   Add to Cart
                 </button> */}
-                 <button
-                       onClick={() => {
-  dispatch(addToCart(product));
-  toast.success("Added to cart");
-}}
-className="mt-5 w-full rounded-full bg-pink-600 text-white py-3 font-semibold hover:bg-pink-700 transition"                    >
-                      Add to Cart
-                    </button>
+                <button
+  disabled={product.stock <= 0}
+  onClick={() => {
+    dispatch(addToCart(product));
+    toast.success("Added to cart");
+  }}
+  className="mt-5 w-full rounded-full bg-pink-600 py-3 font-semibold text-white transition hover:bg-pink-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
+>
+  {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
+</button>
               </div>
             </div>
           ))}

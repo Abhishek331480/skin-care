@@ -5,46 +5,40 @@ const AdminLayout = () => {
     { name: "Dashboard", path: "/admin" },
     { name: "Products", path: "/admin/products" },
     { name: "Add Product", path: "/admin/products/add" },
+    { name: "Orders", path: "/admin/orders" },
+    { name: "Coupons", path: "/admin/coupons" },
   ];
 
   return (
-    <section className="h-screen bg-gray-50 overflow-hidden">
-      <div className="grid h-full md:grid-cols-[260px_1fr]">
-        
-        {/* SIDEBAR */}
-        <aside className="h-screen bg-black text-white p-6 overflow-hidden">
-          <h2 className="text-2xl font-bold mb-8">
-            Admin Panel
-          </h2>
+    <section className="min-h-screen bg-gray-50">
+      <aside className="md:fixed md:left-0 md:top-0 md:h-screen md:w-64 bg-black text-white p-4 md:p-6">
+        <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-8">
+          Admin Panel
+        </h2>
 
-          <nav className="space-y-3">
-            {links.map((link) => (
-              <NavLink
-                key={link.path}
-                to={link.path}
+        <nav className="flex md:block gap-3 overflow-x-auto md:overflow-visible md:space-y-3">
+          {links.map((link) => (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              end
+              className={({ isActive }) =>
+                `shrink-0 block rounded-2xl px-4 py-3 font-medium transition ${
+                  isActive
+                    ? "bg-pink-600 text-white"
+                    : "text-gray-300 hover:bg-white/10"
+                }`
+              }
+            >
+              {link.name}
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
 
-                // IMPORTANT FIX
-                end
-
-                className={({ isActive }) =>
-                  `block rounded-2xl px-4 py-3 font-medium transition-all duration-300 ${
-                    isActive
-                      ? "bg-pink-600 text-white shadow-lg shadow-pink-500/20"
-                      : "text-gray-300 hover:bg-white/10 hover:text-white"
-                  }`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
-          </nav>
-        </aside>
-
-        {/* MAIN CONTENT */}
-        <main className="h-screen overflow-y-auto p-6 md:p-8">
-          <Outlet />
-        </main>
-      </div>
+      <main className="md:ml-64 min-h-screen p-4 md:p-8">
+        <Outlet />
+      </main>
     </section>
   );
 };

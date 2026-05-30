@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 // import { Instagram, Facebook, Twitter } from "lucide-react";
+import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -17,17 +18,11 @@ const Footer = () => {
             </p>
 
             <div className="flex gap-4 mt-6">
-              <button className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-pink-600 transition">
-                {/* <Instagram size={18} /> */}
-              </button>
+               <FaInstagram className="text-pink-500 text-2xl" />
 
-              <button className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-pink-600 transition">
-                {/* <Facebook size={18} /> */}
-              </button>
+              <FaFacebookF className="text-blue-600 text-2xl" />
 
-              <button className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-pink-600 transition">
-                {/* <Twitter size={18} /> */}
-              </button>
+               <FaTwitter className="text-sky-500 text-2xl" />
             </div>
           </div>
 

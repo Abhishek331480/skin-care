@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, PackagePlus, ImagePlus } from "lucide-react";
+import {
+  Upload,
+  ImagePlus,
+  Sparkles,
+  PackagePlus,
+  X,
+  IndianRupee,
+  Boxes,
+} from "lucide-react";
 import api from "../../api/api";
 import toast from "react-hot-toast";
 
@@ -25,6 +33,10 @@ const AddProduct = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const removeImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -60,30 +72,51 @@ const AddProduct = () => {
   };
 
   const inputClass =
-    "w-full rounded-2xl border border-pink-100 bg-white px-5 py-4 text-gray-800 outline-none transition focus:border-pink-400 focus:ring-4 focus:ring-pink-100";
+    "w-full rounded-2xl border border-pink-100 bg-pink-50/40 px-5 py-4 font-semibold text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100";
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-white via-pink-50 to-white/0 p-4 md:p-8">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[4px] text-pink-500">
-            Admin Product
-          </p>
-          <h1 className="mt-3 text-4xl md:text-5xl font-extrabold text-gray-950">
-            Add New Product
-          </h1>
-          <p className="mt-3 text-gray-500">
-            Create a premium skincare product with images, benefits and details.
-          </p>
-        </div>
+    <section className="min-h-screen p-4 md:p-8">
+      <div className="mb-8 relative overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/75 p-6 md:p-8 shadow-[0_20px_70px_rgba(236,72,153,0.18)] backdrop-blur-xl">
+        <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-pink-300/30 blur-3xl" />
+        <div className="absolute -bottom-24 left-20 h-56 w-56 rounded-full bg-purple-300/20 blur-3xl" />
 
-       
+        <div className="relative flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-pink-200 bg-pink-50 px-4 py-2 text-sm font-bold text-pink-700">
+              <Sparkles size={16} />
+              Premium Product Studio
+            </div>
+
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-gray-950">
+              Add New Product
+            </h1>
+
+            <p className="mt-3 max-w-2xl text-gray-500">
+              Create a luxury skincare product with images, pricing, benefits,
+              ingredients and stock details.
+            </p>
+          </div>
+
+        </div>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="rounded-[2.5rem] border border-pink-100 bg-white/80 backdrop-blur-xl p-6 md:p-8 shadow-2xl"
+        className="rounded-[2.5rem] border border-white/70 bg-white/85 p-5 md:p-8 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl"
       >
+        <div className="mb-7 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-bold text-pink-600">Product Details</p>
+            <h2 className="text-3xl font-black text-gray-950">
+              Basic Information
+            </h2>
+          </div>
+
+          <span className="rounded-full border border-pink-100 bg-pink-50 px-4 py-2 text-sm font-bold text-pink-700">
+            Max 4 Images
+          </span>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-5">
           <input
             name="name"
@@ -101,23 +134,35 @@ const AddProduct = () => {
             className={inputClass}
           />
 
-          <input
-            name="price"
-            type="number"
-            placeholder="Price"
-            value={formData.price}
-            onChange={handleChange}
-            className={inputClass}
-          />
+          <div className="relative">
+            <IndianRupee
+              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-pink-500"
+            />
+            <input
+              name="price"
+              type="number"
+              placeholder="Price"
+              value={formData.price}
+              onChange={handleChange}
+              className={`${inputClass} pl-12`}
+            />
+          </div>
 
-          <input
-            name="stock"
-            type="number"
-            placeholder="Stock"
-            value={formData.stock}
-            onChange={handleChange}
-            className={inputClass}
-          />
+          <div className="relative">
+            <Boxes
+              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-pink-500"
+            />
+            <input
+              name="stock"
+              type="number"
+              placeholder="Stock"
+              value={formData.stock}
+              onChange={handleChange}
+              className={`${inputClass} pl-12`}
+            />
+          </div>
 
           <input
             name="skinType"
@@ -127,31 +172,33 @@ const AddProduct = () => {
             className={inputClass}
           />
 
-          <label className="relative flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-pink-200 bg-pink-50/60 px-5 py-4 text-pink-700 font-semibold hover:bg-pink-100 transition">
+          <label className="relative flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-pink-200 bg-gradient-to-br from-pink-50 to-white px-5 py-4 text-pink-700 font-black transition hover:border-pink-300 hover:bg-pink-100">
             <ImagePlus size={22} />
-            {images.length > 0 ? `${images.length} images selected` : "Upload Images"}
+            {images.length > 0
+              ? `${images.length} images selected`
+              : "Upload Product Images"}
+
             <input
               type="file"
               multiple
               accept="image/*"
-              // onChange={(e) => setImages(Array.from(e.target.files))}
               onChange={(e) => {
-  const newFiles = Array.from(e.target.files);
+                const newFiles = Array.from(e.target.files);
 
-  setImages((prev) => {
-    const totalFiles = [...prev, ...newFiles];
+                setImages((prev) => {
+                  const totalFiles = [...prev, ...newFiles];
 
-    if (totalFiles.length > 4) {
-      toast.error("Maximum 4 images allowed");
-      return prev;
-    }
+                  if (totalFiles.length > 4) {
+                    toast.error("Maximum 4 images allowed");
+                    return prev;
+                  }
 
-    return totalFiles;
-  });
+                  return totalFiles;
+                });
 
-  e.target.value = "";
-}}
-              className="absolute inset-0 opacity-0 cursor-pointer"
+                e.target.value = "";
+              }}
+              className="absolute inset-0 cursor-pointer opacity-0"
             />
           </label>
 
@@ -160,13 +207,21 @@ const AddProduct = () => {
               {images.map((img, index) => (
                 <div
                   key={index}
-                  className="h-32 overflow-hidden rounded-2xl border border-pink-100 bg-pink-50"
+                  className="group relative h-36 overflow-hidden rounded-3xl border border-pink-100 bg-pink-50 shadow-sm"
                 >
                   <img
                     src={URL.createObjectURL(img)}
                     alt="preview"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   />
+
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-lg transition hover:bg-red-50"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
               ))}
             </div>
@@ -178,7 +233,7 @@ const AddProduct = () => {
             value={formData.description}
             onChange={handleChange}
             rows="5"
-            className={`${inputClass} md:col-span-2 rounded-[2rem] resize-none`}
+            className={`${inputClass} md:col-span-2 resize-none rounded-[2rem]`}
           />
 
           <input
@@ -198,14 +253,24 @@ const AddProduct = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="mt-8 flex w-full items-center justify-center gap-3 rounded-full bg-black py-4 text-white font-bold text-lg shadow-xl hover:bg-gray-900 transition disabled:opacity-50"
-        >
-          <Upload size={20} />
-          {loading ? "Adding Product..." : "Add Product"}
-        </button>
+        <div className="mt-8 flex flex-col sm:flex-row gap-4">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/products")}
+            className="w-full rounded-2xl border border-pink-100 bg-white px-6 py-4 font-black text-gray-700 shadow-sm transition hover:bg-pink-50 sm:w-auto"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex flex-1 items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-gray-950 via-pink-900 to-gray-950 px-6 py-4 text-lg font-black text-white shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Upload size={20} />
+            {loading ? "Adding Product..." : "Add Product"}
+          </button>
+        </div>
       </form>
     </section>
   );
