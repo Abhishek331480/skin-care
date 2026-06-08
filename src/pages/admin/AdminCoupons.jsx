@@ -344,6 +344,8 @@ const AdminCoupons = () => {
                           {coupon.code}
                         </h2>
 
+                       
+
                         <span
                           className={`rounded-full border px-3 py-1 text-xs font-black ${
                             coupon.isActive
@@ -354,11 +356,21 @@ const AdminCoupons = () => {
                           {coupon.isActive ? "ACTIVE" : "INACTIVE"}
                         </span>
 
+
                         {isExpired && (
                           <span className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-black text-red-600">
                             EXPIRED
                           </span>
                         )}
+                         {/* <span
+      className={`rounded-full border px-3 py-1 text-xs font-black${
+        coupon.user
+          ? "bg-blue-200 text-blue-600"
+          : "bg-green-200 text-green-600"
+      }`}
+    >
+      {coupon.user ? "Personal Coupon" : "Global Coupon"}
+    </span> */}
                       </div>
 
                       <p className="mt-1 text-sm font-semibold text-gray-500">

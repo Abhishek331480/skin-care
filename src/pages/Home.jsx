@@ -1,66 +1,186 @@
-import { Link } from "react-router-dom";
-import productImage from "../assets/product-image1.jpg";
+// import { Link } from "react-router-dom";
+// import productImage from "../assets/product-image1.jpg";
+// import BestSeller from "../components/BestSeller";
+// import SkinTypeSection from "../components/SkinTypeSection";
+// import CustomerRating from "../components/CustomerRating";
+// import TrendingProducts from "../components/TrendingProduct";
+// import Banner1 from "../assets/skin_care_banner1.jpg";
+// import Banner2 from "../assets/Banner2.png";
+// import Banner3 from "../assets/Banner3.png";
+// import Banner from "../assets/skin_care_bg_banner.jpg";
+// import { useEffect, useState } from "react";
+
+// const Home = () => {
+//   return (
+//     <section className="min-h-[calc(100vh-82px)] bg-pink-50">
+//       <div className="w-full">
+//         <div>
+//           <img
+//             src={Banner1}
+//             alt="SkinCare Banner"
+//             className="
+//       hidden md:block
+//       w-full
+//       h-auto
+//       rounded
+//       shadow-2xl
+//     "
+//           />
+//         </div>
+
+//         {/* Mobile Banner */}
+//         <img
+//           src={Banner}
+//           alt="SkinCare Banner"
+//           className="block md:hidden w-full h-[calc(80vh-82px)] rounded-3xl shadow-xl object-cover py-2 px-4"
+//         />
+//       </div>
+//       <BestSeller />
+//       <TrendingProducts />
+//       <SkinTypeSection />
+//       <CustomerRating />
+//     </section>
+//   );
+// };
+
+import { useEffect, useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
 import BestSeller from "../components/BestSeller";
 import SkinTypeSection from "../components/SkinTypeSection";
-import CustomerRating from "../components/CustomerRating"
+import CustomerRating from "../components/CustomerRating";
+import TrendingProducts from "../components/TrendingProduct";
+
+import Banner1 from "../assets/skin_care_banner1.jpg";
+import Banner2 from "../assets/Banner2.png";
+import Banner3 from "../assets/Banner3.png";
+import Banner from "../assets/skin_care_bg_banner.jpg";
+
 const Home = () => {
+  const banners = [Banner1, Banner2, Banner3];
+
+  const [currentBanner, setCurrentBanner] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const nextSlide = () => {
+    setCurrentBanner((prev) => (prev + 1) % banners.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentBanner((prev) =>
+      prev === 0 ? banners.length - 1 : prev - 1
+    );
+  };
+
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
   return (
     <section className="min-h-[calc(100vh-82px)] bg-pink-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center py-16">
-        {/* Left Content */}
-        <div className="space-y-6">
-          <p className="inline-block px-4 py-2 rounded-full bg-pink-100 text-pink-700 text-sm font-medium">
-            Premium Skincare Collection
-          </p>
+      {/* Desktop Hero Slider */}
+      <div
+        className="relative hidden md:block w-full overflow-hidden bg-pink-50"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <img
+          src={banners[currentBanner]}
+          alt="SkinCare Banner"
+          className="
+            w-full
+            h-auto
+            object-cover
+            rounded-b-[2rem]
+            shadow-2xl
+            transition-all
+            duration-700
+            ease-in-out
+          "
+        />
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-            Glow Naturally, <br />
-            Care Deeply
-          </h1>
+        {/* Left Arrow */}
+        <button
+          onClick={prevSlide}
+          className="
+            absolute left-6 top-1/2 -translate-y-1/2
+            h-12 w-12 rounded-full
+            bg-white/80 backdrop-blur-md
+            text-pink-600
+            shadow-lg
+            flex items-center justify-center
+            hover:bg-pink-600 hover:text-white
+            transition-all duration-300
+          "
+        >
+          <ChevronLeft size={26} />
+        </button>
 
-          <p className="text-gray-600 text-lg max-w-xl">
-            Discover skincare products made for every skin type. Clean, gentle,
-            and effective care for your daily routine.
-          </p>
+        {/* Right Arrow */}
+        <button
+          onClick={nextSlide}
+          className="
+            absolute right-6 top-1/2 -translate-y-1/2
+            h-12 w-12 rounded-full
+            bg-white/80 backdrop-blur-md
+            text-pink-600
+            shadow-lg
+            flex items-center justify-center
+            hover:bg-pink-600 hover:text-white
+            transition-all duration-300
+          "
+        >
+          <ChevronRight size={26} />
+        </button>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link
-              to="/shop"
-              className="px-6 py-3 rounded-full bg-pink-600 text-white font-medium text-center hover:bg-pink-700 transition"
-            >
-              Shop Now
-            </Link>
-
-            <button className="px-6 py-3 rounded-full border border-pink-300 text-pink-700 font-medium hover:bg-pink-100 transition">
-              Learn More
-            </button>
-          </div>
-        </div>
-
-        {/* Right Content */}
-        <div className="relative">
-          <div
-            className="h-[420px] rounded-[2rem] shadow-xl flex items-center justify-center bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${productImage})`,
-            }}
-          >
-          </div>
-
-          <div className="absolute -bottom-5 left-6 bg-white rounded-2xl shadow-lg px-5 py-4">
-            <p className="text-sm text-gray-500">Trusted by</p>
-            <p className="text-xl font-bold text-gray-900">10k+ Users</p>
-          </div>
-
-          <div className="absolute top-6 -right-2 bg-white rounded-2xl shadow-lg px-5 py-4">
-            <p className="text-sm text-gray-500">Rating</p>
-            <p className="text-xl font-bold text-gray-900">4.9 ★</p>
-          </div>
+        {/* Dots */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+          {banners.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentBanner(index)}
+              className={`
+                h-3 rounded-full transition-all duration-300
+                ${
+                  currentBanner === index
+                    ? "w-10 bg-pink-600"
+                    : "w-3 bg-white/80 hover:bg-pink-300"
+                }
+              `}
+            />
+          ))}
         </div>
       </div>
-      <BestSeller/>
-     <SkinTypeSection/>
-     <CustomerRating/>
+
+      {/* Mobile Banner */}
+      <img
+        src={Banner}
+        alt="SkinCare Banner"
+        className="
+          block md:hidden
+          w-full
+          h-[calc(80vh-82px)]
+          rounded-3xl
+          shadow-xl
+          object-cover
+          py-2
+          px-4
+        "
+      />
+
+      <BestSeller />
+      <TrendingProducts />
+      <SkinTypeSection />
+      <CustomerRating />
     </section>
   );
 };

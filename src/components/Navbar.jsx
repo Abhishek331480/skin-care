@@ -1,36 +1,41 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { RiCoupon3Line } from "react-icons/ri";
-import {
-  Menu,
-  X,
-  Heart,
-  Sparkles,
-  User,
-  Package,
-  LogOut,
-  ChevronDown,
-  Bell , Home
-} from "lucide-react";
-import { useSelector , useDispatch } from "react-redux";
+import { Menu,X,Heart,Sparkles,User,Package,LogOut,ChevronDown,Bell,Home,} from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../store/slices/authSlice";
 import api from "../api/api";
 import toast from "react-hot-toast";
+import { clearWishlist } from "../store/slices/wishlistSlice";
+import { clearCart } from "../store/slices/cartSlice";
+import { GitCompareArrows } from "lucide-react";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const [unreadCount, setUnreadCount] = useState(0);
+
   //login logout code
-const { user, isAuthenticated } = useSelector(
-  (state) => state.auth
-);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const isWelcomeOfferActive =
+  isAuthenticated &&
+  user?.welcomeOffer &&
+  user.welcomeOffer.isUsed === false &&
+  user.welcomeOffer.expiresAt &&
+  new Date(user.welcomeOffer.expiresAt) > new Date();
+
 
   const cartItems = useSelector((state) => state.cart.cartItems);
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
   const wishlistCount = wishlistItems.length;
+
+  const compareItems = useSelector(
+  (state) => state.compare.compareItems
+);
+
+const compareCount = compareItems.length;
 
   const [isOpen, setIsOpen] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
@@ -42,45 +47,49 @@ const { user, isAuthenticated } = useSelector(
   ];
 
   const fetchUnreadNotifications = async () => {
-  try {
-    const res = await api.get("/notifications");
-    setUnreadCount(res.data.unreadCount);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-useEffect(() => {
-  if (user) {
-    fetchUnreadNotifications();
-  }
-}, [user]);
-
-useEffect(() => {
-  const handleNotificationUpdate = () => {
-    if (user) {
-      fetchUnreadNotifications();
+    try {
+      const res = await api.get("/notifications");
+      setUnreadCount(res.data.unreadCount);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  window.addEventListener("notificationsUpdated", handleNotificationUpdate);
+  useEffect(() => {
+    if (user) {
+      fetchUnreadNotifications();
+    }
+  }, [user]);
 
-  return () => {
-    window.removeEventListener("notificationsUpdated", handleNotificationUpdate);
-  };
-}, [user]);
+  useEffect(() => {
+    const handleNotificationUpdate = () => {
+      if (user) {
+        fetchUnreadNotifications();
+      }
+    };
+
+    window.addEventListener("notificationsUpdated", handleNotificationUpdate);
+
+    return () => {
+      window.removeEventListener(
+        "notificationsUpdated",
+        handleNotificationUpdate,
+      );
+    };
+  }, [user]);
 
   const handleLogout = async () => {
-  try {
-    await api.post("/auth/logout");
+    try {
+      await api.post("/auth/logout");
 
-    dispatch(logoutUser());
-
-    toast.success("Logout successful");
-  } catch (error) {
-    toast.error("Logout failed");
-  }
-};
+      dispatch(logoutUser());
+      dispatch(clearWishlist());
+      dispatch(clearCart());
+      toast.success("Logout successful");
+    } catch (error) {
+      toast.error("Logout failed");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-pink-100/80 bg-white/80 backdrop-blur-2xl">
@@ -126,7 +135,26 @@ useEffect(() => {
 
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center gap-3">
-         
+          <NavLink
+            to="/ai-skin-test"
+            className="relative h-11 w-27 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
+          >
+            AI Skin Test
+          </NavLink>
+
+          {/* <NavLink
+  to="/compare"
+  className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
+>
+  <GitCompareArrows size={20} />
+
+  {compareCount > 0 && (
+    <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-pink-600 text-white text-[11px] font-bold flex items-center justify-center">
+      {compareCount}
+    </span>
+  )}
+</NavLink> */}
+
           <NavLink
             to="/cart"
             className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
@@ -141,102 +169,122 @@ useEffect(() => {
           </NavLink>
 
           <NavLink
-  to="/notifications"
-            className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition">
-  <Bell size={20} />
+            to="/notifications"
+            className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
+          >
+            <Bell size={20} />
 
-  {unreadCount > 0 && (
-    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
-      {unreadCount}
+            {unreadCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+                {unreadCount}
+              </span>
+            )}
+          </NavLink>
+
+          {isAuthenticated ? (
+            <div className="relative">
+              <button
+                onClick={() => setOpenProfile(!openProfile)}
+                className="flex items-center gap-3 rounded-full border border-pink-100 bg-white px-3 py-1.5 shadow-sm hover:shadow-md transition"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-sm font-bold uppercase text-pink-400">
+                  {user?.username?.charAt(0)}
+                </div>
+
+                <ChevronDown size={18} className="text-gray-700" />
+              </button>
+
+              {openProfile && (
+                <div className="absolute right-0 top-14 z-50 w-72 rounded-3xl border border-pink-100 bg-white p-3 shadow-2xl">
+                  <NavLink
+                    to="/profile"
+                    onClick={() => setOpenProfile(false)}
+                    className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+                  >
+                    <User size={21} />
+                    <span className="font-medium">My Profile</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/my-addresses"
+                    className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+                  >
+                    <Home size={21} />
+                    <span className="font-medium">My Address</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/my-orders"
+                    onClick={() => setOpenProfile(false)}
+                    className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+                  >
+                    <Package size={21} />
+                    <span className="font-medium">Orders</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/my-coupons"
+                    className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+                  >
+                    <RiCoupon3Line size={21} />
+                    <span className="font-medium">My Coupons</span>
+                  </NavLink>
+
+                  <NavLink
+  to="/compare"
+  onClick={() => setOpenProfile(false)}
+  className="flex items-center justify-between rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+>
+  <div className="flex items-center gap-4">
+    <GitCompareArrows size={21} />
+    <span className="font-medium">Compare Products</span>
+  </div>
+
+  {compareCount > 0 && (
+    <span className="rounded-full bg-pink-600 px-2 py-0.5 text-xs font-bold text-white">
+      {compareCount}
     </span>
   )}
 </NavLink>
 
-   {isAuthenticated ? (
-  <div className="relative">
-    <button
-      onClick={() => setOpenProfile(!openProfile)}
-      className="flex items-center gap-3 rounded-full border border-pink-100 bg-white px-3 py-1.5 shadow-sm hover:shadow-md transition"
-    >
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-sm font-bold uppercase text-pink-400">
-        {user?.username?.charAt(0)}
-      </div>
+                  <NavLink
+                    to="/wishlist"
+                    onClick={() => setOpenProfile(false)}
+                    className="flex items-center justify-between rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Heart size={21} />
+                      <span className="font-medium">Wishlist</span>
+                    </div>
 
-      <ChevronDown size={18} className="text-gray-700" />
-    </button>
+                    {wishlistCount > 0 && (
+                      <span className="rounded-full bg-pink-600 px-2 py-0.5 text-xs font-bold text-white">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </NavLink>
 
-    {openProfile && (
-      <div className="absolute right-0 top-14 z-50 w-72 rounded-3xl border border-pink-100 bg-white p-3 shadow-2xl">
-        
-        <NavLink
-          to="/profile"
-          onClick={() => setOpenProfile(false)}
-          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
-        >
-          <User size={21} />
-          <span className="font-medium">My Profile</span>
-        </NavLink>
-
-         <NavLink
-  to="/my-addresses"
-   className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"><Home size={21} />
-          <span className="font-medium">My Address</span>
-</NavLink>
-
-        
-
-        <NavLink
-          to="/my-orders"
-          onClick={() => setOpenProfile(false)}
-          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
-        >
-          <Package size={21} />
-          <span className="font-medium">Orders</span>
-        </NavLink>
-
-        <NavLink to="/my-coupons"
-        className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"><RiCoupon3Line size={21} />
-          <span className="font-medium">My Coupons</span>
-        </NavLink>
-
-       <NavLink
-          to="/wishlist"
-          onClick={() => setOpenProfile(false)}
-          className="flex items-center justify-between rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
-        >
-          <div className="flex items-center gap-4">
-            <Heart size={21} />
-            <span className="font-medium">Wishlist</span>
-          </div>
-
-          {wishlistCount > 0 && (
-            <span className="rounded-full bg-pink-600 px-2 py-0.5 text-xs font-bold text-white">
-              {wishlistCount}
-            </span>
+                  <button
+                    onClick={() => {
+                      setOpenProfile(false);
+                      handleLogout();
+                    }}
+                    className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-red-600 hover:bg-red-50 transition"
+                  >
+                    <LogOut size={21} />
+                    <span className="font-medium">Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <NavLink
+              to="/login"
+              className="px-5 py-2 rounded-full bg-black text-white text-sm font-medium"
+            >
+              Login
+            </NavLink>
           )}
-        </NavLink>
- 
-        <button
-          onClick={() => {
-            setOpenProfile(false);
-            handleLogout();
-          }}
-          className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-red-600 hover:bg-red-50 transition"
-        >
-          <LogOut size={21} />
-          <span className="font-medium">Logout</span>
-        </button>
-      </div>
-    )}
-  </div>
-) : (
-  <NavLink
-    to="/login"
-    className="px-5 py-2 rounded-full bg-black text-white text-sm font-medium"
-  >
-    Login
-  </NavLink>
-)}
         </div>
 
         {/* Mobile Button */}
@@ -247,6 +295,15 @@ useEffect(() => {
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </nav>
+
+      {isAuthenticated && isWelcomeOfferActive && (
+  <div className="bg-pink-50 py-2 text-black">
+    <marquee className="text-sm font-bold tracking-wide">
+      🎉 Welcome Offer: Get {user.welcomeOffer.discountPercent}% OFF on products for your first 3 days. Offer valid till{" "}
+      {new Date(user.welcomeOffer.expiresAt).toLocaleDateString("en-IN")}
+    </marquee>
+  </div>
+)}
 
       {/* Mobile Menu */}
       {isOpen && (
@@ -270,32 +327,77 @@ useEffect(() => {
             ))}
 
             <div className="grid grid-cols-2 gap-3 pt-3">
-              <NavLink
-                to="/wishlist"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
-              >
-                <Heart size={18} />
-                Wishlist ({wishlistCount})
-              </NavLink>
+  <NavLink
+    to="/ai-skin-test"
+    onClick={() => setIsOpen(false)}
+    className="flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
+  >
+    <Sparkles size={18} />
+    AI Skin Test
+  </NavLink>
 
-              <NavLink
-                to="/cart"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
-              >
-                <ShoppingBag size={18} />
-                Cart ({cartCount})
-              </NavLink>
-            </div>
+  <NavLink
+    to="/notifications"
+    onClick={() => setIsOpen(false)}
+    className="relative flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
+  >
+    <Bell size={18} />
+    Notifications
 
-            <NavLink
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="block w-full rounded-full bg-gray-950 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-pink-600 transition"
-            >
-              Login
-            </NavLink>
+    {unreadCount > 0 && (
+      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+        {unreadCount}
+      </span>
+    )}
+  </NavLink>
+
+  <NavLink
+    to="/wishlist"
+    onClick={() => setIsOpen(false)}
+    className="flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
+  >
+    <Heart size={18} />
+    Wishlist ({wishlistCount})
+  </NavLink>
+
+  <NavLink
+  to="/compare"
+  onClick={() => setIsOpen(false)}
+  className="flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
+>
+  <GitCompareArrows size={18} />
+  Compare ({compareCount})
+</NavLink>
+
+  <NavLink
+    to="/cart"
+    onClick={() => setIsOpen(false)}
+    className="flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
+  >
+    <FaShoppingCart size={18} />
+    Cart ({cartCount})
+  </NavLink>
+</div>
+
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  handleLogout();
+                }}
+                className="block w-full rounded-full bg-red-500 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+            ) : (
+              <NavLink
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="block w-full rounded-full bg-gray-950 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-pink-600 transition"
+              >
+                Login
+              </NavLink>
+            )}
           </div>
         </div>
       )}

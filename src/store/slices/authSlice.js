@@ -23,11 +23,14 @@ const authSlice = createSlice({
   state.isAuthenticated = false;
   state.authLoading = false;
 },
+setAuthLoading: (state, action) => {
+  state.authLoading = action.payload;
+},
 
   },
 });
 
-export const { setUser, logoutUser } =
+export const { setUser, logoutUser ,setAuthLoading} =
   authSlice.actions;
 
 export default authSlice.reducer;

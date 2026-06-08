@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 
 const Profile = () => {
+  
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +22,8 @@ const Profile = () => {
 
   const [updating, setUpdating] = useState(false);
   const [changing, setChanging] = useState(false);
+
+ 
 
   const fetchProfile = async () => {
     try {
@@ -134,7 +138,58 @@ const Profile = () => {
                   Joined:{" "}
                   {new Date(profile?.createdAt).toLocaleDateString("en-IN")}
                 </span>
+                {/* <pre>
+{JSON.stringify(profile?.welcomeOffer, null, 2)}
+</pre> */}
               </div>
+                <div className="rounded-[2rem] border border-pink-100 bg-gradient-to-r from-pink-50 to-rose-50 p-5">
+  <p className="text-xs font-black uppercase tracking-[3px] text-pink-600">
+    Refer & Earn
+  </p>
+
+  <div className="mt-3">
+    <p className="text-sm font-semibold text-gray-500">
+      Your Referral Code
+    </p>
+
+    <div className="mt-2 flex items-center justify-between gap-3">
+      <span className="rounded-full bg-white px-4 py-2 text-lg font-black tracking-widest text-pink-600 shadow">
+        {profile?.referralCode || "N/A"}
+      </span>
+
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(
+            profile?.referralCode || ""
+          );
+          toast.success("Referral code copied");
+        }}
+        className="rounded-full bg-black px-4 py-2 text-sm font-bold text-white hover:bg-gray-900"
+      >
+        Copy
+      </button>
+    </div>
+  </div>
+
+  <div className="mt-4 rounded-2xl bg-white p-3 text-center shadow-sm">
+    <p className="text-xs font-semibold text-gray-500">
+      Total Referrals
+    </p>
+
+    <p className="mt-1 text-2xl font-black text-pink-600">
+      {profile?.totalReferrals || 0}
+    </p>
+
+   <p className="mt-2 text-sm font-semibold text-gray-500">
+  Reward Referrals Remaining:{" "}
+  {Math.max(
+    0,
+    (profile?.maxReferralRewards || 10) -
+      (profile?.totalReferrals || 0)
+  )}
+</p>
+  </div>
+</div>
             </div>
           </div>
 
@@ -224,6 +279,7 @@ const Profile = () => {
                     required
                   />
                 </div>
+              
               </div>
 
               <button

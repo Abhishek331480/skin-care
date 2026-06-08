@@ -1,22 +1,34 @@
 import { useParams, Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../store/slices/cartSlice";
-import { toggleWishlist } from "../store/slices/wishlistSlice";
+import { setCart } from "../store/slices/cartSlice";
+import { setWishlist } from "../store/slices/wishlistSlice";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import api from "../api/api";
 import RecentlyViewed from "../components/RecentlyViewed";
+import { GitCompareArrows } from "lucide-react";
+import { addToCompare } from "../store/slices/compareSlice";
 
 const ProductDetails = () => {
+ 
   const { id } = useParams();
   const dispatch = useDispatch();
+
+  const compareItems = useSelector(
+  (state) => state.compare.compareItems
+);
+
+      const { user, isAuthenticated } = useSelector(
+  (state) => state.auth
+);
+
 
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const [selectedVariant, setSelectedVariant] = useState(null);
   // review states
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
@@ -25,6 +37,14 @@ const ProductDetails = () => {
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
   const isWishlisted = wishlistItems.some((item) => item._id === product?._id);
+
+  
+const isWelcomeOfferActive =
+  isAuthenticated &&
+  user?.welcomeOffer &&
+  user.welcomeOffer.isUsed === false &&
+  user.welcomeOffer.expiresAt &&
+  new Date(user.welcomeOffer.expiresAt) > new Date();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -36,6 +56,10 @@ const ProductDetails = () => {
 
         setProduct(currentProduct);
         setSelectedImage(currentProduct.images?.[0]);
+
+        if (currentProduct.variants?.length > 0) {
+          setSelectedVariant(currentProduct.variants[0]);
+        }
 
         const oldViewed =
           JSON.parse(localStorage.getItem("recentlyViewed")) || [];
@@ -91,6 +115,72 @@ const ProductDetails = () => {
     }
   };
 
+  const handleWishlist = async () => {
+    try {
+      const res = await api.post(`/wishlist/${product._id}`);
+
+      dispatch(setWishlist(res.data.wishlist));
+
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Wishlist update failed");
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      const cartKey = selectedVariant
+        ? `${product._id}-${selectedVariant.size}`
+        : product._id;
+
+      const res = await api.post("/cart", {
+        productId: product._id,
+        quantity: 1,
+        variant: selectedVariant
+          ? {
+              size: selectedVariant.size,
+              price: selectedVariant.price,
+              stock: selectedVariant.stock,
+              sku: selectedVariant.sku,
+            }
+          : null,
+        cartKey,
+      });
+
+      dispatch(setCart(res.data.cart));
+
+      toast.success(
+        selectedVariant
+          ? `${product.name} (${selectedVariant.size}) added to cart`
+          : `${product.name} added to cart`,
+        {
+          id: "cart-toast",
+          duration: 1500,
+        },
+      );
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add cart");
+    }
+  };
+
+  const handleCompare = () => {
+  const exists = compareItems.find(
+    (item) => item._id === product._id
+  );
+
+  if (exists) {
+    return toast.error("Already added to compare");
+  }
+
+  if (compareItems.length >= 3) {
+    return toast.error("Maximum 3 products can be compared");
+  }
+
+  dispatch(addToCompare(product));
+
+  toast.success("Added to compare");
+};
+
   if (loading) {
     return (
       <div className="text-center py-20 text-xl font-semibold">Loading...</div>
@@ -110,6 +200,29 @@ const ProductDetails = () => {
   }
   const productReviews = Array.isArray(product?.reviews) ? product.reviews : [];
 
+  const displayPrice = selectedVariant?.price || product.price;
+  const displayStock =
+    selectedVariant?.stock !== undefined
+      ? selectedVariant.stock
+      : product.stock;
+
+      
+// const finalPrice = isWelcomeOfferActive
+//   ? Math.round(
+//       product.price -
+//         (product.price *
+//           user.welcomeOffer.discountPercent) /
+//           100
+//     )
+//   : product.price;
+
+const finalPrice = isWelcomeOfferActive
+  ? Math.round(
+      displayPrice -
+        (displayPrice * user.welcomeOffer.discountPercent) / 100
+    )
+  : displayPrice;
+  
   return (
     <section className="py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
@@ -121,7 +234,7 @@ const ProductDetails = () => {
               className="w-full h-full object-cover"
             />
 
-            {product.stock <= 0 && (
+            {displayStock <= 0 && (
               <span className="absolute left-4 top-4 rounded-full bg-red-500 px-4 py-2 text-sm font-bold text-white">
                 Out of Stock
               </span>
@@ -153,15 +266,7 @@ const ProductDetails = () => {
 
         <div className="relative space-y-6 bg-white/80 backdrop-blur-xl border border-pink-100 rounded-[2rem] p-6 sm:p-8 shadow-xl">
           <button
-            onClick={() => {
-              dispatch(toggleWishlist(product));
-
-              if (isWishlisted) {
-                toast.error("Removed from wishlist");
-              } else {
-                toast.success("Added to wishlist");
-              }
-            }}
+            onClick={handleWishlist}
             className="absolute top-6 right-6 h-11 w-11 rounded-full border border-pink-100 bg-white shadow-sm flex items-center justify-center hover:bg-pink-50 transition"
           >
             <Heart
@@ -188,7 +293,69 @@ const ProductDetails = () => {
             </span>
           </div>
 
-          <p className="text-4xl font-bold text-gray-950">₹{product.price}</p>
+        {/* {isWelcomeOfferActive ? (
+  <div>
+    <p className="text-lg font-semibold text-gray-400 line-through">
+      ₹{product.price}
+    </p>
+
+    <p className="text-4xl font-black text-gray-950">
+      ₹{finalPrice}
+    </p>
+
+    <span className="mt-2 inline-flex rounded-full bg-pink-100 px-4 py-2 text-sm font-black text-pink-600">
+      🎉 {user.welcomeOffer.discountPercent}% OFF Welcome Offer
+    </span>
+  </div>
+) : (
+  <p className="text-4xl font-black text-gray-950">
+    ₹{product.price}
+  </p>
+)} */}
+
+{isWelcomeOfferActive ? (
+  <div>
+    <p className="text-lg font-semibold text-gray-400 line-through">
+      ₹{displayPrice}
+    </p>
+
+    <p className="text-4xl font-black text-gray-950">
+      ₹{finalPrice}
+    </p>
+
+    <span className="mt-2 inline-flex rounded-full bg-pink-100 px-4 py-2 text-sm font-black text-pink-600">
+      🎉 {user.welcomeOffer.discountPercent}% OFF Welcome Offer
+    </span>
+  </div>
+) : (
+  <p className="text-4xl font-black text-gray-950">
+    ₹{displayPrice}
+  </p>
+)}
+          {product.variants?.length > 0 && (
+            <div>
+              <h3 className="mb-3 text-lg font-bold text-gray-900">
+                Select Size
+              </h3>
+
+              <div className="flex flex-wrap gap-3">
+                {product.variants.map((variant) => (
+                  <button
+                    key={variant._id || variant.size}
+                    type="button"
+                    onClick={() => setSelectedVariant(variant)}
+                    className={`rounded-full border px-5 py-3 text-sm font-bold transition ${
+                      selectedVariant?.size === variant.size
+                        ? "border-pink-600 bg-pink-600 text-white"
+                        : "border-pink-100 bg-pink-50 text-pink-700 hover:border-pink-300"
+                    }`}
+                  >
+                    {variant.size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <p className="text-gray-600 leading-8 text-base">
             {product.description}
@@ -202,9 +369,7 @@ const ProductDetails = () => {
 
             <div className="rounded-2xl bg-pink-50 p-4">
               <p className="text-xs text-gray-500">Stock</p>
-              <p className="font-semibold text-gray-900">
-                {product.stock} left
-              </p>
+              <p className="font-semibold text-gray-900">{displayStock} left</p>
             </div>
           </div>
 
@@ -243,18 +408,37 @@ const ProductDetails = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button
-              disabled={product.stock <= 0}
-              onClick={() => dispatch(addToCart(product))}
-              className="flex-1 rounded-full bg-black px-7 py-4 font-semibold text-white shadow-xl transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
-            >
-              {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
-            </button>
+  <button
+    onClick={handleCompare}
+    className="
+      flex items-center justify-center gap-2
+      rounded-full border border-pink-200
+      px-6 py-4 font-semibold
+      text-pink-600
+      hover:bg-pink-50
+      transition
+    "
+  >
+    <GitCompareArrows size={18} />
+    Compare
+  </button>
 
-            <button className="flex-1 rounded-full border border-pink-200 bg-pink-50 px-7 py-4 text-pink-700 font-semibold hover:bg-pink-100 transition">
-              Buy Now
-            </button>
-          </div>
+  <button
+    disabled={displayStock <= 0}
+    onClick={handleAddToCart}
+    className="
+      cursor-pointer flex-1 rounded-full
+      bg-black px-7 py-4 font-semibold
+      text-white shadow-xl transition
+      hover:bg-gray-900
+      disabled:cursor-not-allowed
+      disabled:bg-gray-300
+      disabled:text-gray-500
+    "
+  >
+    {displayStock <= 0 ? "Out of Stock" : "Add to Cart"}
+  </button>
+</div>
         </div>
       </div>
 
@@ -308,9 +492,10 @@ const ProductDetails = () => {
           </div>
         </div>
       )}
-
+      <RecentlyViewed />
+      
       {/* product review code */}
-      <div className="mt-20">
+       <div className="mt-20">
         <div className="mb-8">
           <p className="text-sm font-bold uppercase tracking-[4px] text-pink-600">
             Customer Feedback
@@ -326,50 +511,6 @@ const ProductDetails = () => {
         </div>
 
         <div className="grid lg:grid-cols-[420px_1fr] gap-8">
-          {/* Add Review Card */}
-          <form
-            onSubmit={handleReviewSubmit}
-            className="rounded-[2.5rem] border border-pink-100 bg-white p-7 shadow-2xl h-fit"
-          >
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-950">
-                Write a Review
-              </h3>
-
-              <p className="mt-2 text-gray-500">
-                Share your experience with this product.
-              </p>
-            </div>
-
-            <select
-              value={reviewRating}
-              onChange={(e) => setReviewRating(Number(e.target.value))}
-              className="w-full rounded-2xl border border-pink-100 bg-pink-50/60 px-5 py-4 font-semibold outline-none focus:ring-4 focus:ring-pink-100"
-            >
-              {[5, 4, 3, 2, 1].map((star) => (
-                <option key={star} value={star}>
-                  {star} Star
-                </option>
-              ))}
-            </select>
-
-            <textarea
-              value={reviewComment}
-              onChange={(e) => setReviewComment(e.target.value)}
-              placeholder="Write your honest review..."
-              required
-              rows="6"
-              className="mt-4 w-full resize-none rounded-[2rem] border border-pink-100 bg-pink-50/60 px-5 py-4 outline-none focus:ring-4 focus:ring-pink-100"
-            />
-
-            <button
-              disabled={reviewLoading}
-              className="mt-5 w-full rounded-full bg-black py-4 font-bold text-white shadow-xl hover:bg-gray-900 disabled:opacity-50"
-            >
-              {reviewLoading ? "Submitting..." : "Submit Review"}
-            </button>
-          </form>
-
           {/* Review Cards */}
           <div className="space-y-5">
             {productReviews.length === 0 ? (
@@ -418,7 +559,6 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      <RecentlyViewed/>
     </section>
   );
 };

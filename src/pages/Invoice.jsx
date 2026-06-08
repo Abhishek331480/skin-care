@@ -32,7 +32,7 @@ const Invoice = () => {
 
   const subTotal = order.items.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
+    0,
   );
 
   return (
@@ -40,21 +40,13 @@ const Invoice = () => {
       <div className="print-area max-w-4xl mx-auto bg-white rounded-[2rem] p-8 shadow-2xl ">
         <div className="flex justify-between border-b pb-6">
           <div>
-            <h1 className="text-4xl font-black text-gray-950">
-              SkinCare
-            </h1>
-            <p className="text-gray-500 mt-2">
-              Premium Skincare Store
-            </p>
+            <h1 className="text-4xl font-black text-gray-950">SkinCare</h1>
+            <p className="text-gray-500 mt-2">Premium Skincare Store</p>
           </div>
 
           <div className="text-right">
-            <h2 className="text-3xl font-bold text-pink-600">
-              INVOICE
-            </h2>
-            <p className="text-sm text-gray-500 mt-2">
-              #{order._id}
-            </p>
+            <h2 className="text-3xl font-bold text-pink-600">INVOICE</h2>
+            <p className="text-sm text-gray-500 mt-2">#{order._id}</p>
           </div>
         </div>
 
@@ -74,10 +66,7 @@ const Invoice = () => {
             <h3 className="font-bold text-gray-950 mb-2">Order Details</h3>
             <p>Status: {order.orderStatus}</p>
             <p>Payment: {order.paymentStatus}</p>
-            <p>
-              Date:{" "}
-              {new Date(order.createdAt).toLocaleDateString("en-IN")}
-            </p>
+            <p>Date: {new Date(order.createdAt).toLocaleDateString("en-IN")}</p>
           </div>
         </div>
 
@@ -95,7 +84,15 @@ const Invoice = () => {
             <tbody>
               {order.items.map((item) => (
                 <tr key={item._id} className="border-t">
-                  <td className="p-4 font-semibold">{item.name}</td>
+                  <td className="p-4">
+                    <p className="font-semibold">{item.name}</p>
+
+                    {item.variant?.size && (
+                      <p className="mt-1 text-sm font-semibold text-pink-600">
+                        Size: {item.variant.size}
+                      </p>
+                    )}
+                  </td>
                   <td className="p-4">{item.quantity}</td>
                   <td className="p-4">₹{item.price}</td>
                   <td className="p-4 text-right">
@@ -134,11 +131,11 @@ const Invoice = () => {
           </p>
 
           <button
-  onClick={() => window.print()}
-  className="no-print rounded-full bg-black px-6 py-3 font-semibold text-white"
->
-  Print / Save PDF
-</button>
+            onClick={() => window.print()}
+            className="no-print rounded-full bg-black px-6 py-3 font-semibold text-white"
+          >
+            Print / Save PDF
+          </button>
         </div>
       </div>
     </section>

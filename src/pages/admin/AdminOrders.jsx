@@ -125,28 +125,27 @@ const AdminOrders = () => {
     "
         />
 
-        <div className="flex flex-wrap gap-3">
-          {statusTabs.map((status) => (
-            <button
-              key={status}
-              onClick={() => {
-                setActiveStatus(status);
-                setCurrentPage(1);
-              }}
-              className={`
-          rounded-2xl px-5 py-3 text-sm font-bold transition
-          whitespace-nowrap
-          ${
-            activeStatus === status
-              ? "bg-pink-600 text-white shadow-lg shadow-pink-200"
-              : "bg-white text-gray-600 border border-pink-100 hover:bg-pink-50"
-          }
-        `}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
+        <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1">
+  {statusTabs.map((status) => (
+    <button
+      key={status}
+      onClick={() => {
+        setActiveStatus(status);
+        setCurrentPage(1);
+      }}
+      className={`
+        shrink-0 rounded-xl px-4 py-2.5 text-sm font-bold transition
+        ${
+          activeStatus === status
+            ? "bg-pink-600 text-white shadow-lg shadow-pink-200"
+            : "bg-white text-gray-600 border border-pink-100 hover:bg-pink-50"
+        }
+      `}
+    >
+      {status}
+    </button>
+  ))}
+</div>
       </div>
 
       {currentOrders.length === 0 && (
@@ -239,6 +238,11 @@ const AdminOrders = () => {
 
                     <div>
                       <h3 className="font-bold text-gray-950">{item.name}</h3>
+                      {item.variant?.size && (
+  <p className="text-sm font-semibold text-pink-600">
+    Size: {item.variant.size}
+  </p>
+)}
                       <p className="text-sm text-gray-500">
                         Qty: {item.quantity}
                       </p>

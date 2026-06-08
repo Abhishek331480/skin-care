@@ -1,126 +1,129 @@
 import { Link } from "react-router-dom";
-
+import { ArrowRight, Sparkles } from "lucide-react";
+import oily_skin from "../assets/oily_skin.jpg";
+import dry_skin from "../assets/dry_skin.jpg";
+import sensitive_skin from "../assets/sensetive_skin.jpg";
+import Combination_skin from "../assets/combination_skin.jpg";
+import acne_prone_skin from "../assets/acne_skin.jpg";
 const SkinTypeSection = () => {
   const skinTypes = [
     {
       name: "Oily Skin",
       desc: "Lightweight care to balance excess oil and shine.",
       path: "/shop?skinType=oily",
-      image:
-        "https://i1-c.pinimg.com/1200x/49/02/06/490206d7ccc21a88ec6e0c4c6d21df04.jpg",
+      image: oily_skin,
     },
-
     {
       name: "Dry Skin",
       desc: "Deep hydration for soft, smooth, nourished skin.",
       path: "/shop?skinType=dry",
-      image:
-        "https://i1-c.pinimg.com/1200x/63/b5/62/63b562ba3e2130b1a2cff61ad4d6a740.jpg",
+      image: dry_skin,
     },
-
     {
       name: "Sensitive Skin",
       desc: "Gentle formulas made for easily irritated skin.",
       path: "/shop?skinType=sensitive",
-      image:
-        "https://i1-c.pinimg.com/736x/ac/c1/34/acc134d3f1b18069342c7b8b67d297af.jpg",
+      image:sensitive_skin,
+        
     },
-
     {
       name: "Combination Skin",
       desc: "Balanced skincare for oily and dry areas.",
-      path: "/shop?skinType=acne",
-      image:
-        "https://i.pinimg.com/736x/b9/f0/a3/b9f0a351cbf25d84bd7f4d9a37ff9762.jpg",
+      path: "/shop?skinType=combination",
+      image: Combination_skin,
     },
-
     {
       name: "Acne Prone",
       desc: "Targeted care for breakouts and clogged pores.",
-      path: "/shop?skinType=combination",
-      image:
-        "https://i.pinimg.com/736x/87/47/2b/87472b131932ec4de770b273ea438cd1.jpg",
+      path: "/shop?skinType=acne prone",
+      image: acne_prone_skin,
     },
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-pink-50 via-white to-pink-50">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <p className="text-sm font-semibold tracking-[4px] uppercase text-pink-600">
-            Personalized Care
-          </p>
+    <section className="relative overflow-hidden  py-24">
+      <div className="absolute -left-32 top-20 h-72 w-72 rounded-full bg-pink-200/40 blur-3xl" />
+      <div className="absolute -right-32 bottom-20 h-80 w-80 rounded-full bg-rose-200/50 blur-3xl" />
 
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-950 mt-3">
-            Shop by Skin Type
+      <div className="relative mx-auto max-w-7xl px-4">
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <div className="mx-auto mb-5 flex w-fit items-center gap-2 rounded-full border border-pink-100 bg-white/80 px-5 py-2 shadow-sm backdrop-blur-xl">
+            <Sparkles size={16} className="text-pink-500" />
+            <span className="text-xs font-black uppercase tracking-[4px] text-pink-600">
+              Personalized Care
+            </span>
+          </div>
+
+          <h2 className="text-4xl font-black tracking-tight text-gray-950 sm:text-5xl md:text-6xl">
+            Shop by{" "}
+            <span className="bg-gradient-to-r from-pink-600 via-rose-500 to-pink-400 bg-clip-text text-transparent">
+              Skin Type
+            </span>
           </h2>
 
-          <p className="text-gray-600 mt-5 leading-8">
-            Discover skincare routines specially crafted for your unique skin
-            concerns and daily glow goals.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-gray-600">
+            Discover luxury skincare routines crafted for your unique skin
+            concerns, daily glow goals and healthy radiant skin.
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
-          {skinTypes.map((type) => (
+        <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          {skinTypes.map((type, index) => (
             <Link
               key={type.name}
               to={type.path}
-              className="
-                group overflow-hidden rounded-[2rem]
-                bg-white border border-pink-100
-                shadow-sm hover:shadow-2xl
+              className={`
+                group relative overflow-hidden rounded-[2rem]
+                border border-white/70 bg-white/70 p-2
+                shadow-[0_20px_70px_rgba(15,23,42,0.08)]
+                backdrop-blur-2xl transition-all duration-500
                 hover:-translate-y-2
-                transition-all duration-500
-              "
+                hover:shadow-[0_35px_100px_rgba(236,72,153,0.22)]
+                ${index === 4 ? "lg:col-start-2" : ""}
+              `}
             >
-              {/* Image */}
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={type.image}
-                  alt={type.name}
-                  className="
-                    w-full h-full object-cover object-center 
-                    group-hover:scale-110
-                    transition-transform duration-700
-                  "
-                />
+              <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white via-pink-50/70 to-rose-100/60 opacity-0 transition duration-500 group-hover:opacity-100" />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+              <div className="relative overflow-hidden rounded-[1.7rem]">
+                <div className="relative h-[360px] overflow-hidden">
+                  <img
+                    src={type.image}
+                    alt={type.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
 
-                <div className="absolute bottom-5 left-5">
-                  <span className="rounded-full bg-white/90 backdrop-blur-md px-4 py-2 text-sm font-semibold text-pink-600 shadow">
-                    Skin Care
-                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-rose-600/20" />
+
+                  {/* <div className="absolute left-5 top-5 rounded-full border border-white/30 bg-white/85 px-4 py-2 text-[10px] font-black uppercase tracking-[2px] text-pink-700 shadow-xl backdrop-blur-xl">
+                    Skin Ritual
+                  </div> */}
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="text-3xl font-black text-white drop-shadow-lg">
+                      {type.name}
+                    </h3>
+
+                    <p className="mt-3 max-w-sm text-sm leading-6 text-white/85">
+                      {type.desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Content */}
-              <div className="p-7">
-                <h3 className="text-2xl font-bold text-gray-950 group-hover:text-pink-600 transition">
-                  {type.name}
-                </h3>
+                <div className="relative flex items-center justify-between bg-white px-6 py-5">
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-400">
+                      Curated Products
+                    </p>
+                    <p className="mt-1 text-sm font-bold text-gray-950">
+                      Personalized for your skin
+                    </p>
+                  </div>
 
-                <p className="text-gray-600 mt-3 leading-7">
-                  {type.desc}
-                </p>
-
-                <div className="mt-6 flex items-center justify-between">
-                  <span className="text-sm text-gray-400">
-                    Personalized Products
-                  </span>
-
-                  <span
-                    className="
-                      font-semibold text-pink-600
-                      group-hover:translate-x-1
-                      transition-transform
-                    "
-                  >
-                    Explore →
-                  </span>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-gray-950 via-pink-700 to-rose-500 text-white shadow-xl shadow-pink-200 transition duration-300 group-hover:scale-110">
+                    <ArrowRight size={19} />
+                  </div>
                 </div>
               </div>
             </Link>

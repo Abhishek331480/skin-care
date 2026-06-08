@@ -22,28 +22,25 @@ const MyOrders = () => {
     fetchMyOrders();
   }, []);
 
-
   const handleCancelOrder = async (orderId) => {
-  const confirmCancel = window.confirm(
-    "Are you sure you want to cancel this order?"
-  );
-
-  if (!confirmCancel) return;
-
-  try {
-    const res = await api.put(`/orders/${orderId}/cancel`);
-
-    toast.success(res.data.message);
-
-    setOrders((prev) =>
-      prev.map((order) =>
-        order._id === orderId ? res.data.order : order
-      )
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?",
     );
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Failed to cancel order");
-  }
-};
+
+    if (!confirmCancel) return;
+
+    try {
+      const res = await api.put(`/orders/${orderId}/cancel`);
+
+      toast.success(res.data.message);
+
+      setOrders((prev) =>
+        prev.map((order) => (order._id === orderId ? res.data.order : order)),
+      );
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to cancel order");
+    }
+  };
 
   if (loading) {
     return (
@@ -71,9 +68,7 @@ const MyOrders = () => {
           <p className="text-sm font-bold uppercase tracking-[0.25em] text-pink-600">
             My Purchases
           </p>
-          <h1 className="mt-2 text-4xl font-black text-gray-950">
-            My Orders
-          </h1>
+          <h1 className="mt-2 text-4xl font-black text-gray-950">My Orders</h1>
           <p className="mt-3 text-gray-500">
             Your recent skincare purchases and invoice details.
           </p>
@@ -130,6 +125,11 @@ const MyOrders = () => {
                           <h3 className="line-clamp-1 text-sm font-bold text-gray-950">
                             {item.name}
                           </h3>
+                          {item.variant?.size && (
+                            <p className="text-sm font-semibold text-pink-600">
+                              Size: {item.variant.size}
+                            </p>
+                          )}
                           <p className="text-xs font-medium text-gray-500">
                             Qty: {item.quantity}
                           </p>
@@ -168,35 +168,36 @@ const MyOrders = () => {
                     </span>
                   </div>
                 </div>
-               <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-  <button
-    onClick={() => navigate(`/order/${order._id}`)}
-    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-gray-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-pink-600 sm:w-auto"
-  >
-    View Details
-  </button>
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                  <button
+                    onClick={() => navigate(`/order/${order._id}`)}
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-gray-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-pink-600 sm:w-auto"
+                  >
+                    View Details
+                  </button>
 
-  <button
-    onClick={() => window.open(`/invoice/${order._id}`, "_blank")}
-    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-gray-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-pink-600 sm:w-auto"
-  >
-    <Download size={17} />
-    Download Invoice
-  </button>
+                  <button
+                    onClick={() =>
+                      window.open(`/invoice/${order._id}`, "_blank")
+                    }
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-gray-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-pink-600 sm:w-auto"
+                  >
+                    <Download size={17} />
+                    Download Invoice
+                  </button>
 
-  {["PLACED", "PROCESSING"].includes(order.orderStatus) && (
-    <button
-      onClick={() => handleCancelOrder(order._id)}
-      className="flex w-full cursor-pointer items-center justify-center rounded-full bg-red-50 px-5 py-3 text-sm font-black text-red-600 transition hover:bg-red-100 sm:w-auto"
-    >
-      Cancel Order
-    </button>
-  )}
-</div>
+                  {["PLACED", "PROCESSING"].includes(order.orderStatus) && (
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className="flex w-full cursor-pointer items-center justify-center rounded-full bg-red-50 px-5 py-3 text-sm font-black text-red-600 transition hover:bg-red-100 sm:w-auto"
+                    >
+                      Cancel Order
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
-         
         </div>
       </div>
     </section>

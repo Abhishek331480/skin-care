@@ -39,16 +39,40 @@ const Footer = () => {
           </div>
 
           {/* Support */}
-          <div>
-            <h3 className="text-xl font-semibold mb-5">Support</h3>
+          {/* Support */}
+<div>
+  <h3 className="text-xl font-semibold mb-5">Support</h3>
 
-            <div className="flex flex-col gap-3 text-gray-400">
-              <p>Help Center</p>
-              <p>Shipping Policy</p>
-              <p>Privacy Policy</p>
-              <p>Terms & Conditions</p>
-            </div>
-          </div>
+  <div className="flex flex-col gap-3 text-gray-400">
+    <Link
+      to="/help-center"
+      className="hover:text-pink-500 transition"
+    >
+      Help Center
+    </Link>
+
+    <Link
+      to="/shipping-policy"
+      className="hover:text-pink-500 transition"
+    >
+      Shipping Policy
+    </Link>
+
+    <Link
+      to="/privacy-policy"
+      className="hover:text-pink-500 transition"
+    >
+      Privacy Policy
+    </Link>
+
+    <Link
+      to="/terms-and-conditions"
+      className="hover:text-pink-500 transition"
+    >
+      Terms & Conditions
+    </Link>
+  </div>
+</div>
 
           {/* Newsletter */}
           <div>

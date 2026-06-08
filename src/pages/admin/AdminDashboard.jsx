@@ -107,12 +107,12 @@ const AdminDashboard = () => {
 const staticData = [
   {
     month: "Jan",
-    revenue: 25000,
+    revenue: 15000,
     orders: 4,
   },
   {
     month: "Feb",
-    revenue: 45000,
+    revenue: 35000,
     orders: 7,
   },
   {
@@ -122,8 +122,13 @@ const staticData = [
   },
   {
     month: "Apr",
-    revenue: 50000,
+    revenue: 30000,
     orders: 9,
+  },
+  {
+    month: "May",
+    revenue: 156000,
+    orders: 30,
   },
 ];
 
@@ -211,8 +216,8 @@ const ordersSeries = [
 const lowStockProducts = stats?.lowStockProducts || [];
 
 const topSellingProducts = stats?.topSellingProducts || [];
-  console.log("STATS:", stats);
-console.log("CHART DATA:", chartData);
+//   console.log("STATS:", stats);
+// console.log("CHART DATA:", chartData);
 
   return (
     <section className="min-h-screen p-4 md:p-8">

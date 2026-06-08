@@ -17,6 +17,15 @@ const AddProduct = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [variants, setVariants] = useState([
+    {
+      size: "",
+      price: "",
+      stock: "",
+      sku: "",
+    },
+  ]);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -26,12 +35,40 @@ const AddProduct = () => {
     skinType: "",
     ingredients: "",
     benefits: "",
+    variants: [],
+    isBestSeller: false,
   });
 
+  const handleVariantChange = (index, field, value) => {
+    const updatedVariants = [...variants];
+
+    updatedVariants[index][field] = value;
+
+    setVariants(updatedVariants);
+  };
+
+  const addVariant = () => {
+    setVariants([
+      ...variants,
+      {
+        size: "",
+        price: "",
+        stock: "",
+        sku: "",
+      },
+    ]);
+  };
+
+  const removeVariant = (index) => {
+    setVariants(variants.filter((_, i) => i !== index));
+  };
+
   const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -55,7 +92,8 @@ const AddProduct = () => {
       form.append("skinType", formData.skinType);
       form.append("ingredients", formData.ingredients);
       form.append("benefits", formData.benefits);
-
+      form.append("variants", JSON.stringify(variants));
+      form.append("isBestSeller", formData.isBestSeller);
       images.forEach((image) => {
         form.append("images", image);
       });
@@ -96,7 +134,6 @@ const AddProduct = () => {
               ingredients and stock details.
             </p>
           </div>
-
         </div>
       </div>
 
@@ -142,7 +179,7 @@ const AddProduct = () => {
             <input
               name="price"
               type="number"
-              placeholder="Price"
+              placeholder="Base Price / Auto from variants"
               value={formData.price}
               onChange={handleChange}
               className={`${inputClass} pl-12`}
@@ -157,7 +194,7 @@ const AddProduct = () => {
             <input
               name="stock"
               type="number"
-              placeholder="Stock"
+              placeholder="Base Stock / Auto from variants"
               value={formData.stock}
               onChange={handleChange}
               className={`${inputClass} pl-12`}
@@ -171,6 +208,30 @@ const AddProduct = () => {
             onChange={handleChange}
             className={inputClass}
           />
+          {/* <select
+  name="skinType"
+  value={formData.skinType}
+  onChange={handleChange}
+  className={inputClass}
+>
+  <option value="">Select Skin Type</option>
+  <option value="Oily">Oily</option>
+  <option value="Dry">Dry</option>
+  <option value="Sensitive">Sensitive</option>
+  <option value="Combination">Combination</option>
+  <option value="Acne">Acne</option>
+</select> */}
+
+          <label className="flex items-center gap-3 rounded-2xl border border-pink-100 bg-pink-50/40 px-5 py-4 font-bold text-gray-700">
+            <input
+              type="checkbox"
+              name="isBestSeller"
+              checked={formData.isBestSeller}
+              onChange={handleChange}
+              className="h-5 w-5 accent-pink-600"
+            />
+            Mark as Best Seller
+          </label>
 
           <label className="relative flex cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-pink-200 bg-gradient-to-br from-pink-50 to-white px-5 py-4 text-pink-700 font-black transition hover:border-pink-300 hover:bg-pink-100">
             <ImagePlus size={22} />
@@ -251,6 +312,83 @@ const AddProduct = () => {
             onChange={handleChange}
             className={`${inputClass} md:col-span-2`}
           />
+
+          <div className="md:col-span-2 mt-4 rounded-[2rem] border border-pink-100 bg-pink-50/30 p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-black text-gray-950">
+                Product Variants
+              </h3>
+
+              <button
+                type="button"
+                onClick={addVariant}
+                className="rounded-full bg-pink-600 px-4 py-2 text-sm font-bold text-white"
+              >
+                + Add Variant
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {variants.map((variant, index) => (
+                <div
+                  key={index}
+                  className="grid gap-3 rounded-2xl border border-pink-100 bg-white p-4 md:grid-cols-4"
+                >
+                  <input
+                    type="text"
+                    placeholder="Size (10ml)"
+                    value={variant.size}
+                    onChange={(e) =>
+                      handleVariantChange(index, "size", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    value={variant.price}
+                    onChange={(e) =>
+                      handleVariantChange(index, "price", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Stock"
+                    value={variant.stock}
+                    onChange={(e) =>
+                      handleVariantChange(index, "stock", e.target.value)
+                    }
+                    className={inputClass}
+                  />
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="SKU"
+                      value={variant.sku}
+                      onChange={(e) =>
+                        handleVariantChange(index, "sku", e.target.value)
+                      }
+                      className={inputClass}
+                    />
+
+                    {variants.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(index)}
+                        className="rounded-xl bg-red-100 px-4 text-red-600"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="mt-8 flex flex-col sm:flex-row gap-4">

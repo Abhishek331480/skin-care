@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
@@ -7,6 +7,17 @@ import { clearCart } from "../store/slices/cartSlice";
 
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
+
+  const { user, isAuthenticated } = useSelector(
+  (state) => state.auth
+);
+
+const isWelcomeOfferActive =
+  isAuthenticated &&
+  user?.welcomeOffer &&
+  user.welcomeOffer.isUsed === false &&
+  user.welcomeOffer.expiresAt &&
+  new Date(user.welcomeOffer.expiresAt) > new Date();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,12 +45,72 @@ const [selectedAddressId, setSelectedAddressId] = useState("");
   // payment state
   const [paymentMethod, setPaymentMethod] = useState("COD");
 
-  const totalAmount = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
+  const fetchAddresses = async () => {
+  try {
+    const res = await api.get("/addresses");
 
-  const payableAmount = finalAmount || totalAmount;
+    setAddresses(res.data.addresses);
+
+    const defaultAddress =
+      res.data.addresses.find((item) => item.isDefault) ||
+      res.data.addresses[0];
+
+    if (defaultAddress) {
+      setSelectedAddressId(defaultAddress._id);
+
+      setShippingAddress({
+        fullName: defaultAddress.fullName,
+        phone: defaultAddress.phone,
+        address: defaultAddress.address,
+        city: defaultAddress.city,
+        state: defaultAddress.state,
+        pincode: defaultAddress.pincode,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+useEffect(() => {
+  fetchAddresses();
+}, []);
+
+const handleSelectAddress = (address) => {
+  setSelectedAddressId(address._id);
+
+  setShippingAddress({
+    fullName: address.fullName,
+    phone: address.phone,
+    address: address.address,
+    city: address.city,
+    state: address.state,
+    pincode: address.pincode,
+  });
+};
+
+
+
+ const originalAmount = cartItems.reduce(
+  (total, item) =>
+    total +
+    (item.variant?.price || item.product?.price || 0) *
+      item.quantity,
+  0
+);
+
+const welcomeDiscount = isWelcomeOfferActive
+  ? Math.round(
+      (originalAmount *
+        user.welcomeOffer.discountPercent) /
+        100
+    )
+  : 0;
+
+const totalAmount =
+  originalAmount - welcomeDiscount;
+  // const payableAmount = finalAmount || totalAmount;
+  const payableAmount =finalAmount > 0? finalAmount : totalAmount;
 
   // coupan code
   const handleApplyCoupon = async () => {
@@ -123,11 +194,12 @@ const [selectedAddressId, setSelectedAddressId] = useState("");
       paymentStatus: "PAID",
     });
 
-    toast.success(orderRes.data.message);
-    window.dispatchEvent(new Event("notificationsUpdated"));
-    dispatch(clearCart());
+toast.success(orderRes.data.message);
+await api.delete("/cart");
+dispatch(clearCart());
+window.dispatchEvent(new Event("notificationsUpdated"));
+navigate("/my-orders");
 
-    navigate("/my-orders");
   } catch (error) {
     toast.error(
       error.response?.data?.message ||
@@ -156,13 +228,42 @@ const [selectedAddressId, setSelectedAddressId] = useState("");
     try {
       setLoading(true);
 
-      const items = cartItems.map((item) => ({
-        product: item._id || item.product || item.id,
-        name: item.name,
-        image: item.images?.[0] || item.image,
-        price: item.price,
-        quantity: item.quantity,
-      }));
+//       const items = cartItems.map((item) => ({
+//   product: item._id || item.product || item.id,
+//   name: item.name,
+//   image: item.images?.[0] || item.image,
+//   price: item.price,
+//   quantity: item.quantity,
+
+//   variant: item.selectedVariant
+//     ? {
+//         size: item.selectedVariant.size,
+//         price: item.selectedVariant.price,
+//         sku: item.selectedVariant.sku,
+//       }
+//     : null,
+// }));
+const items = cartItems.map((item) => ({
+  product: item.product?._id,
+
+  name: item.product?.name,
+
+  image: item.product?.images?.[0],
+
+  price:
+    item.variant?.price ||
+    item.product?.price,
+
+  quantity: item.quantity,
+
+  variant: item.variant
+    ? {
+        size: item.variant.size,
+        price: item.variant.price,
+        sku: item.variant.sku,
+      }
+    : null,
+}));
 
       const orderPayload = {
         items,
@@ -182,11 +283,15 @@ const [selectedAddressId, setSelectedAddressId] = useState("");
         paymentStatus: "PENDING",
       });
 
-      toast.success(res.data.message || "Order placed successfully");
-     window.dispatchEvent(new Event("notificationsUpdated"));
-      dispatch(clearCart());
+     toast.success(res.data.message || "Order placed successfully");
 
-      navigate("/my-orders");
+await api.delete("/cart");
+
+dispatch(clearCart());
+
+window.dispatchEvent(new Event("notificationsUpdated"));
+
+navigate("/my-orders");
     } catch (error) {
       console.log("ORDER ERROR:", error.response?.data || error.message);
 
@@ -227,6 +332,39 @@ const [selectedAddressId, setSelectedAddressId] = useState("");
           <div className="lg:col-span-2 bg-white rounded-[2rem] border border-pink-100 shadow-xl p-6 space-y-6">
             <div>
               <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
+
+              {addresses.length > 0 && (
+  <div className="mb-6 grid gap-4 sm:grid-cols-2">
+    {addresses.map((item) => (
+      <button
+        key={item._id}
+        type="button"
+        onClick={() => handleSelectAddress(item)}
+        className={`rounded-2xl border p-4 text-left transition ${
+          selectedAddressId === item._id
+            ? "border-pink-500 bg-pink-50"
+            : "border-pink-100 bg-white hover:bg-pink-50"
+        }`}
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <p className="font-black text-gray-950">{item.fullName}</p>
+
+          {item.isDefault && (
+            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-600">
+              Default
+            </span>
+          )}
+        </div>
+
+        <p className="text-sm font-semibold text-gray-600">{item.phone}</p>
+        <p className="mt-1 text-sm text-gray-500">{item.address}</p>
+        <p className="text-sm text-gray-500">
+          {item.city}, {item.state} - {item.pincode}
+        </p>
+      </button>
+    ))}
+  </div>
+)}
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <input
@@ -367,8 +505,22 @@ const [selectedAddressId, setSelectedAddressId] = useState("");
               <div className="flex justify-between">
                 <span className="text-gray-500">Subtotal</span>
 
-                <span className="font-semibold">₹{totalAmount}</span>
+               <span className="font-semibold">
+  ₹{originalAmount}
+</span>
               </div>
+              {welcomeDiscount > 0 && (
+  <div className="flex justify-between text-pink-600">
+    <span>
+      Welcome Offer (
+      {user.welcomeOffer.discountPercent}%)
+    </span>
+
+    <span className="font-semibold">
+      - ₹{welcomeDiscount}
+    </span>
+  </div>
+)}
 
               {discountAmount > 0 && (
                 <div className="flex justify-between text-green-600">

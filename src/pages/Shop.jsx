@@ -144,8 +144,9 @@ useEffect(() => {
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
 
-       const matchesSkinType =
-  !skinTypeFromUrl || product.skinType === skinTypeFromUrl;
+   const matchesSkinType =
+  !skinTypeFromUrl ||
+  product.skinType?.toLowerCase() === skinTypeFromUrl.toLowerCase();
 
     return matchesSearch && matchesCategory && matchesSkinType;
   });

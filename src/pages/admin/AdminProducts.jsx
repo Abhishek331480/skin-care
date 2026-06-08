@@ -167,20 +167,48 @@ const AdminProducts = () => {
                   className="h-16 w-16 rounded-2xl object-cover bg-pink-50"
                 />
 
-                <div>
-                  <h3 className="font-bold text-gray-950">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 line-clamp-1">
-                    {product.description}
-                  </p>
-                </div>
+               <div>
+  <h3 className="font-bold text-gray-950">
+    {product.name}
+  </h3>
+
+  <p className="text-sm text-gray-500 line-clamp-1">
+    {product.description}
+  </p>
+
+  {product.variants?.length > 0 && (
+    <div className="mt-2">
+      <p className="text-xs font-bold text-pink-600">
+        {product.variants.length} Variants
+      </p>
+
+      <div className="mt-1 flex flex-wrap gap-2">
+        {product.variants.map((variant, index) => (
+          <span
+            key={index}
+            className="rounded-full bg-pink-50 px-2 py-1 text-xs font-semibold text-pink-700"
+          >
+            {variant.size}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
 
                 <p className="text-gray-700">{product.category}</p>
 
-                <p className="font-bold text-gray-950">
-                  ₹{product.price}
-                </p>
+               <div>
+  <p className="font-bold text-gray-950">
+    ₹{product.price}
+  </p>
+
+  {product.variants?.length > 0 && (
+    <p className="text-xs text-gray-500">
+      Base Price
+    </p>
+  )}
+</div>
 
                 <p
                   className={`font-semibold ${

@@ -129,12 +129,17 @@ import toast from "react-hot-toast";
 import api from "../api/api";
 import { NavLink } from "react-router-dom";
 import { Sparkles, Mail, LockKeyhole, User } from "lucide-react";
+import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 const Register = () => {
   const [loading, setLoading] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [referralCode, setReferralCode] = useState("");
+
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -145,17 +150,20 @@ const Register = () => {
       const res = await api.post("/auth/register", {
         username,
         email,
-        password,
+        password, referralCode,
       });
 
       toast.success(
         res.data.message ||
           "Registration successful. Please verify your email."
-      );
+      ); 
+
+       navigate("/login");
 
       setUsername("");
       setEmail("");
       setPassword("");
+      setReferralCode("");
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed");
     } finally {
@@ -167,6 +175,7 @@ const Register = () => {
     setUsername("");
     setEmail("");
     setPassword("");
+    setReferralCode("");
   }, []);
 
   return (
@@ -287,6 +296,24 @@ const Register = () => {
                   />
                 </div>
               </div>
+
+              <div>
+  <label className="text-sm font-bold text-gray-700">
+    Referral Code (Optional)
+  </label>
+
+  <input
+    type="text"
+    placeholder="Enter referral code"
+    value={referralCode}
+    onChange={(e) =>
+      setReferralCode(
+        e.target.value.toUpperCase()
+      )
+    }
+    className="w-full mt-2 rounded-full border border-pink-100 bg-pink-50/50 px-5 py-4 font-medium outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+  />
+</div>
 
               <button
                 type="submit"

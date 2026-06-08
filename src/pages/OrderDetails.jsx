@@ -16,6 +16,8 @@ const OrderDetails = () => {
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviewData, setReviewData] = useState({});
+  const [reviewLoading, setReviewLoading] = useState(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -50,40 +52,72 @@ const OrderDetails = () => {
 
   const subTotal = order.items.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
+    0,
   );
 
   const statusClass =
     order.orderStatus === "DELIVERED"
       ? "bg-green-100 text-green-700"
       : order.orderStatus === "CANCELLED"
-      ? "bg-red-100 text-red-700"
-      : "bg-pink-100 text-pink-700";
+        ? "bg-red-100 text-red-700"
+        : "bg-pink-100 text-pink-700";
 
   const paymentClass =
     order.paymentStatus === "PAID"
       ? "bg-green-100 text-green-700"
       : "bg-orange-100 text-orange-700";
 
+  const handleCancelOrder = async () => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?",
+    );
 
-      const handleCancelOrder = async () => {
-  const confirmCancel = window.confirm(
-    "Are you sure you want to cancel this order?"
-  );
+    if (!confirmCancel) return;
 
-  if (!confirmCancel) return;
+    try {
+      const res = await api.put(`/orders/${order._id}/cancel`);
 
-  try {
-    const res = await api.put(`/orders/${order._id}/cancel`);
+      toast.success(res.data.message);
 
-    toast.success(res.data.message);
+      setOrder(res.data.order);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to cancel order");
+    }
+  };
 
-    setOrder(res.data.order);
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Failed to cancel order");
-  }
-};
+  const handleReviewSubmit = async (e, productId) => {
+    e.preventDefault();
 
+    const data = reviewData[productId];
+
+    if (!data?.comment) {
+      toast.error("Please write a review");
+      return;
+    }
+
+    try {
+      setReviewLoading(productId);
+
+      const res = await api.post(`/products/${productId}/reviews`, {
+        rating: data.rating || 5,
+        comment: data.comment,
+      });
+
+      toast.success(res.data.message);
+
+      setReviewData((prev) => ({
+        ...prev,
+        [productId]: {
+          rating: 5,
+          comment: "",
+        },
+      }));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add review");
+    } finally {
+      setReviewLoading(null);
+    }
+  };
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -170,10 +204,73 @@ const OrderDetails = () => {
                         <h3 className="text-lg font-black text-gray-950">
                           {item.name}
                         </h3>
-
+                        {item.variant?.size && (
+                          <p className="mt-1 text-sm font-semibold text-pink-600">
+                            Size: {item.variant.size}
+                          </p>
+                        )}
                         <p className="mt-2 text-sm font-semibold text-gray-500">
                           Quantity: {item.quantity} × ₹{item.price}
                         </p>
+
+                        {/* review and rating */}
+                        {order.orderStatus === "DELIVERED" && (
+                          <form
+                            onSubmit={(e) =>
+                              handleReviewSubmit(e, item.product)
+                            }
+                            className="mt-4 rounded-2xl border border-pink-100 bg-white p-4"
+                          >
+                            <p className="mb-3 text-sm font-black text-gray-950">
+                              Rate this product
+                            </p>
+
+                            <select
+                              value={reviewData[item.product]?.rating || 5}
+                              onChange={(e) =>
+                                setReviewData((prev) => ({
+                                  ...prev,
+                                  [item.product]: {
+                                    ...prev[item.product],
+                                    rating: Number(e.target.value),
+                                  },
+                                }))
+                              }
+                              className="w-full rounded-xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-bold outline-none"
+                            >
+                              {[5, 4, 3, 2, 1].map((star) => (
+                                <option key={star} value={star}>
+                                  {star} Star
+                                </option>
+                              ))}
+                            </select>
+
+                            <textarea
+                              value={reviewData[item.product]?.comment || ""}
+                              onChange={(e) =>
+                                setReviewData((prev) => ({
+                                  ...prev,
+                                  [item.product]: {
+                                    ...prev[item.product],
+                                    comment: e.target.value,
+                                  },
+                                }))
+                              }
+                              placeholder="Write your review..."
+                              rows="3"
+                              className="mt-3 w-full resize-none rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm outline-none"
+                            />
+
+                            <button
+                              disabled={reviewLoading === item.product}
+                              className="mt-3 rounded-full bg-black px-5 py-3 text-sm font-black text-white disabled:opacity-50"
+                            >
+                              {reviewLoading === item.product
+                                ? "Submitting..."
+                                : "Submit Review"}
+                            </button>
+                          </form>
+                        )}
                       </div>
 
                       <div className="rounded-2xl bg-white px-5 py-3 text-left shadow-sm sm:text-right">
@@ -268,13 +365,13 @@ const OrderDetails = () => {
                 Download Invoice
               </button>
               {["PLACED", "PROCESSING"].includes(order.orderStatus) && (
-  <button
-    onClick={handleCancelOrder}
-    className="mt-4 flex w-full items-center justify-center rounded-full bg-red-50 px-6 py-4 text-sm font-black text-red-600 transition hover:bg-red-100"
-  >
-    Cancel Order
-  </button>
-)}
+                <button
+                  onClick={handleCancelOrder}
+                  className="mt-4 flex w-full items-center justify-center rounded-full bg-red-50 px-6 py-4 text-sm font-black text-red-600 transition hover:bg-red-100"
+                >
+                  Cancel Order
+                </button>
+              )}
             </div>
 
             {/* Status */}
@@ -311,48 +408,50 @@ const OrderDetails = () => {
             </div> */}
 
             <div className="mt-6">
-  <h3 className="mb-5 font-black text-gray-950">Order Timeline</h3>
+              <h3 className="mb-5 font-black text-gray-950">Order Timeline</h3>
 
-  {["PLACED", "PROCESSING", "SHIPPED", "DELIVERED"].map((status, index, arr) => {
-    const currentIndex = arr.indexOf(order.orderStatus);
-    const isActive = index <= currentIndex;
-    const isLast = index === arr.length - 1;
+              {["PLACED", "PROCESSING", "SHIPPED", "DELIVERED"].map(
+                (status, index, arr) => {
+                  const currentIndex = arr.indexOf(order.orderStatus);
+                  const isActive = index <= currentIndex;
+                  const isLast = index === arr.length - 1;
 
-    return (
-      <div key={status} className="relative flex gap-4">
-        {!isLast && (
-          <div
-            className={`absolute left-[7px] top-6 h-full w-[2px] ${
-              isActive ? "bg-pink-600" : "bg-gray-200"
-            }`}
-          />
-        )}
+                  return (
+                    <div key={status} className="relative flex gap-4">
+                      {!isLast && (
+                        <div
+                          className={`absolute left-[7px] top-6 h-full w-[2px] ${
+                            isActive ? "bg-pink-600" : "bg-gray-200"
+                          }`}
+                        />
+                      )}
 
-        <div
-          className={`relative z-10 mt-1 h-4 w-4 rounded-full ring-4 ${
-            isActive
-              ? "bg-pink-600 ring-pink-100"
-              : "bg-gray-300 ring-gray-100"
-          }`}
-        />
+                      <div
+                        className={`relative z-10 mt-1 h-4 w-4 rounded-full ring-4 ${
+                          isActive
+                            ? "bg-pink-600 ring-pink-100"
+                            : "bg-gray-300 ring-gray-100"
+                        }`}
+                      />
 
-        <div className="pb-6">
-          <p
-            className={`text-sm font-black ${
-              isActive ? "text-gray-950" : "text-gray-400"
-            }`}
-          >
-            {status}
-          </p>
+                      <div className="pb-6">
+                        <p
+                          className={`text-sm font-black ${
+                            isActive ? "text-gray-950" : "text-gray-400"
+                          }`}
+                        >
+                          {status}
+                        </p>
 
-          <p className="mt-1 text-xs font-semibold text-gray-400">
-            {isActive ? "Completed" : "Pending"}
-          </p>
-        </div>
-      </div>
-    );
-  })}
-</div>
+                        <p className="mt-1 text-xs font-semibold text-gray-400">
+                          {isActive ? "Completed" : "Pending"}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                },
+              )}
+            </div>
 
             <Link
               to="/my-orders"
