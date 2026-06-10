@@ -1,5 +1,5 @@
 import customer1 from "../assets/customer1.jpg";
-import customer2 from "../assets/customer2.jpg";
+import customer2 from "../assets/customer_2.jpg";
 import customer3 from "../assets/customer3.jpg";    
 
 const CustomerRating = () => {
