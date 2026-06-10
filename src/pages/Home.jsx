@@ -48,15 +48,20 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { lazy, Suspense } from "react";
+const BestSeller = lazy(() => import("../components/BestSeller"));
+const SkinTypeSection = lazy(() => import("../components/SkinTypeSection"));
+const CustomerRating = lazy(() => import("../components/CustomerRating"));
+const TrendingProducts = lazy(() => import("../components/TrendingProduct"));
+// import BestSeller from "../components/BestSeller";
+// import SkinTypeSection from "../components/SkinTypeSection";
+// import CustomerRating from "../components/CustomerRating";
+// import TrendingProducts from "../components/TrendingProduct";
 
-import BestSeller from "../components/BestSeller";
-import SkinTypeSection from "../components/SkinTypeSection";
-import CustomerRating from "../components/CustomerRating";
-import TrendingProducts from "../components/TrendingProduct";
-
-import Banner1 from "../assets/skin_care_banner1.jpg";
-import Banner2 from "../assets/Banner2.png";
-import Banner3 from "../assets/Banner3.png";
+// import Banner1 from "../assets/skin_care_banner1.jpg";
+import Banner1 from "../assets/skin_care_banner1.webp";
+import Banner2 from "../assets/Banner2.webp";
+import Banner3 from "../assets/Banner3.webp";
 import Banner from "../assets/skin_care_bg_banner.jpg";
 
 const Home = () => {
@@ -177,10 +182,12 @@ const Home = () => {
         "
       />
 
-      <BestSeller />
-      <TrendingProducts />
-      <SkinTypeSection />
-      <CustomerRating />
+     <Suspense fallback={<div>Loading...</div>}>
+  <BestSeller />
+  <TrendingProducts />
+  <SkinTypeSection />
+  <CustomerRating />
+</Suspense>
     </section>
   );
 };

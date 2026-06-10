@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { RiCoupon3Line } from "react-icons/ri";
@@ -38,6 +38,24 @@ const Navbar = () => {
 const compareCount = compareItems.length;
 
   const [isOpen, setIsOpen] = useState(false);
+  const profileRef = useRef(null);
+
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (
+      profileRef.current &&
+      !profileRef.current.contains(e.target)
+    ) {
+      setOpenProfile(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
   const [openProfile, setOpenProfile] = useState(false);
   const navLinks = [
     { name: "Home", path: "/" },
@@ -142,19 +160,6 @@ const compareCount = compareItems.length;
             AI Skin Test
           </NavLink>
 
-          {/* <NavLink
-  to="/compare"
-  className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
->
-  <GitCompareArrows size={20} />
-
-  {compareCount > 0 && (
-    <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-pink-600 text-white text-[11px] font-bold flex items-center justify-center">
-      {compareCount}
-    </span>
-  )}
-</NavLink> */}
-
           <NavLink
             to="/cart"
             className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
@@ -182,7 +187,7 @@ const compareCount = compareItems.length;
           </NavLink>
 
           {isAuthenticated ? (
-            <div className="relative">
+            <div ref={profileRef} className="relative">
               <button
                 onClick={() => setOpenProfile(!openProfile)}
                 className="flex items-center gap-3 rounded-full border border-pink-100 bg-white px-3 py-1.5 shadow-sm hover:shadow-md transition"
@@ -288,12 +293,32 @@ const compareCount = compareItems.length;
         </div>
 
         {/* Mobile Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-800 shadow-sm hover:bg-pink-50 transition"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+       <div className="flex items-center gap-3 lg:hidden">
+
+  {/* Notification Bell */}
+  <NavLink
+    to="/notifications"
+    onClick={() => setIsOpen(false)}
+    className="relative flex h-11 w-11 items-center justify-center rounded-full border border-pink-100 bg-white text-pink-600 shadow-sm hover:bg-pink-50 transition"
+  >
+    <Bell size={20} />
+
+    {unreadCount > 0 && (
+      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+        {unreadCount}
+      </span>
+    )}
+  </NavLink>
+
+  {/* Hamburger Menu */}
+  <button
+    onClick={() => setIsOpen(!isOpen)}
+    className="h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-800 shadow-sm hover:bg-pink-50 transition"
+  >
+    {isOpen ? <X size={24} /> : <Menu size={24} />}
+  </button>
+
+</div>
       </nav>
 
       {isAuthenticated && isWelcomeOfferActive && (
@@ -336,7 +361,7 @@ const compareCount = compareItems.length;
     AI Skin Test
   </NavLink>
 
-  <NavLink
+  {/* <NavLink
     to="/notifications"
     onClick={() => setIsOpen(false)}
     className="relative flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
@@ -349,7 +374,7 @@ const compareCount = compareItems.length;
         {unreadCount}
       </span>
     )}
-  </NavLink>
+  </NavLink> */}
 
   <NavLink
     to="/wishlist"

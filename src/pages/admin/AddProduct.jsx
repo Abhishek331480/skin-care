@@ -314,15 +314,22 @@ const AddProduct = () => {
           />
 
           <div className="md:col-span-2 mt-4 rounded-[2rem] border border-pink-100 bg-pink-50/30 p-5">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xl font-black text-gray-950">
+            <div className="mb-4 md:flex md:items-center md:justify-between">
+              <h3 className="text-xl font-black text-gray-950 mb-3 text-center">
                 Product Variants
               </h3>
 
               <button
                 type="button"
                 onClick={addVariant}
-                className="rounded-full bg-pink-600 px-4 py-2 text-sm font-bold text-white"
+                className="
+    w-full sm:w-auto
+    rounded-full bg-pink-600
+    px-5 py-3
+    text-sm font-bold text-white
+    shadow-lg shadow-pink-200
+    transition hover:bg-pink-700
+  "
               >
                 + Add Variant
               </button>

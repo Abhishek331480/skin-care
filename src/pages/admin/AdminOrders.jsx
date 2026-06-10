@@ -125,7 +125,7 @@ const AdminOrders = () => {
     "
         />
 
-        <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1">
+        <div className="flex flex-wrap items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 border border-pink-100 p-2 rounded-2xl bg-white/80 shadow-sm">
   {statusTabs.map((status) => (
     <button
       key={status}

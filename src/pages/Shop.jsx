@@ -89,8 +89,6 @@ useEffect(() => {
   currentPage
 ]);
 
-
-
   const categories = ["All", "Serum", "Sunscreen", "Moisturizer", "Cleanser"];
 
 //   const products = [
