@@ -370,7 +370,7 @@ navigate("/my-orders");
                   name="fullName"
                   value={shippingAddress.fullName}
                   onChange={handleChange}
-                  className="border rounded-full px-5 py-3"
+                 className="w-full min-w-0 rounded-full border border-gray-300 px-4 py-3 outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
                   placeholder="Full name"
                   required
                 />
@@ -379,7 +379,7 @@ navigate("/my-orders");
                   name="phone"
                   value={shippingAddress.phone}
                   onChange={handleChange}
-                  className="border rounded-full px-5 py-3"
+                  className="w-full min-w-0 rounded-full border border-gray-300 px-4 py-3 outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
                   placeholder="Phone number"
                   required
                 />
@@ -388,7 +388,7 @@ navigate("/my-orders");
                   name="address"
                   value={shippingAddress.address}
                   onChange={handleChange}
-                  className="sm:col-span-2 border rounded-full px-5 py-3"
+                 className="w-full min-w-0 rounded-full border border-gray-300 px-4 py-3 outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
                   placeholder="Address"
                   required
                 />
@@ -397,7 +397,7 @@ navigate("/my-orders");
                   name="city"
                   value={shippingAddress.city}
                   onChange={handleChange}
-                  className="border rounded-full px-5 py-3"
+                  className="w-full min-w-0 rounded-full border border-gray-300 px-4 py-3 outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
                   placeholder="City"
                   required
                 />
@@ -406,7 +406,7 @@ navigate("/my-orders");
                   name="state"
                   value={shippingAddress.state}
                   onChange={handleChange}
-                  className="border rounded-full px-5 py-3"
+                  className="w-full min-w-0 rounded-full border border-gray-300 px-4 py-3 outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
                   placeholder="State"
                   required
                 />
@@ -415,7 +415,7 @@ navigate("/my-orders");
                   name="pincode"
                   value={shippingAddress.pincode}
                   onChange={handleChange}
-                  className="border rounded-full px-5 py-3"
+                  className="w-full min-w-0 rounded-full border border-gray-300 px-4 py-3 outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100"
                   placeholder="Pincode"
                   required
                 />
@@ -424,7 +424,7 @@ navigate("/my-orders");
 
             <div>
               <h2 className="text-xl font-bold mb-4">Payment Method</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <label className="border rounded-2xl p-4 cursor-pointer">
                   <input
                     type="radio"
