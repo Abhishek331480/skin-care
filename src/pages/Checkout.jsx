@@ -322,15 +322,14 @@ navigate("/my-orders");
 
   return (
     <form onSubmit={handlePlaceOrder}>
-      <section className="py-10">
+      <section className="px-4 sm:px-6 lg:px-0 py-6 sm:py-10 overflow-x-hidden">
         <div className="mb-8">
           <p className="text-sm font-semibold text-pink-600">Secure Checkout</p>
-          <h1 className="text-4xl font-bold text-gray-950">Checkout</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-950">Checkout</h1>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white rounded-[2rem] border border-pink-100 shadow-xl p-6 space-y-6">
-            <div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+<div className="lg:col-span-2 bg-white rounded-3xl lg:rounded-[2rem] border border-pink-100 shadow-xl p-4 sm:p-6 space-y-6">            <div>
               <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
 
               {addresses.length > 0 && (
@@ -449,26 +448,24 @@ navigate("/my-orders");
             </div>
           </div>
 
-          <div className="bg-white rounded-[2rem] border border-pink-100 shadow-xl p-6 h-fit sticky top-28">
-            <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
+<div className="bg-white rounded-3xl lg:rounded-[2rem] border border-pink-100 shadow-xl p-4 sm:p-6 h-fit lg:sticky lg:top-28">            <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 
             <div className="mb-6">
               <p className="font-semibold mb-3">Apply Coupon</p>
 
-              <div className="flex gap-3">
+             <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   placeholder="Enter coupon code"
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
-                  className="flex-1 rounded-full border border-pink-100 px-5 py-3 outline-none focus:ring-4 focus:ring-pink-100"
-                />
+className="w-full min-w-0 rounded-full border border-pink-100 px-5 py-3 outline-none focus:ring-4 focus:ring-pink-100"                />
 
                 <button
                   type="button"
                   onClick={handleApplyCoupon}
                   disabled={couponLoading}
-                  className="rounded-full bg-pink-600 px-6 py-3 font-semibold text-white disabled:opacity-50"
+                 className="w-full sm:w-auto rounded-full bg-pink-600 px-6 py-3 font-semibold text-white disabled:opacity-50"
                 >
                   {couponLoading ? "Applying..." : "Apply"}
                 </button>
