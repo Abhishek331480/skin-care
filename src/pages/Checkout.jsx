@@ -311,7 +311,12 @@ navigate("/my-orders");
     } catch (error) {
       console.log("ORDER ERROR:", error.response?.data || error.message);
 
-      toast.error(error.response?.data?.message || "Failed to place order");
+      // toast.error(error.response?.data?.message || "Failed to place order");
+      toast.error(
+  error.response?.data?.message ||
+    error.response?.data?.error ||
+    "Something went wrong after placing order"
+);
     } finally {
       setLoading(false);
     }
