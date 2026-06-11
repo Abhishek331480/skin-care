@@ -283,9 +283,25 @@ const items = cartItems.map((item) => ({
         paymentStatus: "PENDING",
       });
 
-     toast.success(res.data.message || "Order placed successfully");
+//      toast.success(res.data.message || "Order placed successfully");
 
-await api.delete("/cart");
+// await api.delete("/cart");
+
+// dispatch(clearCart());
+
+// window.dispatchEvent(new Event("notificationsUpdated"));
+
+// navigate("/my-orders");
+toast.success(res.data.message || "Order placed successfully");
+
+try {
+  await api.delete("/cart");
+} catch (cartError) {
+  console.log(
+    "CART CLEAR ERROR:",
+    cartError.response?.data || cartError.message
+  );
+}
 
 dispatch(clearCart());
 
