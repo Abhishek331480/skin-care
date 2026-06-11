@@ -65,7 +65,18 @@ const About = () => {
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                 <NavLink
                   to="/bestSeller"
-                  className="inline-flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-pink-600 to-rose-500 px-8 py-4 font-black text-white shadow-xl shadow-pink-200 transition hover:-translate-y-1 hover:shadow-2xl"
+                  className="
+    inline-flex items-center justify-center gap-2
+    whitespace-nowrap
+    rounded-full
+    bg-gradient-to-r from-pink-600 to-rose-500
+    px-6 sm:px-8
+    py-3 sm:py-4
+    text-sm sm:text-base
+    font-black text-white
+    shadow-xl shadow-pink-200
+    transition hover:-translate-y-1 hover:shadow-2xl
+  "
                 >
                   Shop Best Sellers
                   <ArrowRight size={20} />
