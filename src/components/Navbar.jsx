@@ -405,55 +405,16 @@ useEffect(() => {
 </div>
 
             {isAuthenticated ? (
-  <div className="space-y-3 pt-3">
-    <NavLink
-      to="/profile"
-      onClick={() => setIsOpen(false)}
-      className="flex items-center gap-3 rounded-2xl bg-white border border-pink-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-pink-50"
-    >
-      <User size={18} />
-      My Profile
-    </NavLink>
-
-    <NavLink
-      to="/my-addresses"
-      onClick={() => setIsOpen(false)}
-      className="flex items-center gap-3 rounded-2xl bg-white border border-pink-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-pink-50"
-    >
-      <Home size={18} />
-      My Address
-    </NavLink>
-
-    <NavLink
-      to="/my-orders"
-      onClick={() => setIsOpen(false)}
-      className="flex items-center gap-3 rounded-2xl bg-white border border-pink-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-pink-50"
-    >
-      <Package size={18} />
-      My Orders
-    </NavLink>
-
-    <NavLink
-      to="/my-coupons"
-      onClick={() => setIsOpen(false)}
-      className="flex items-center gap-3 rounded-2xl bg-white border border-pink-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-pink-50"
-    >
-      <RiCoupon3Line size={18} />
-      My Coupons
-    </NavLink>
-
-    <button
-      onClick={() => {
-        setIsOpen(false);
-        handleLogout();
-      }}
-      className="flex w-full items-center justify-center gap-2 rounded-full bg-red-500 px-5 py-3 text-sm font-semibold text-white hover:bg-red-600 transition"
-    >
-      <LogOut size={18} />
-      Logout
-    </button>
-  </div>
-) : (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  handleLogout();
+                }}
+                className="block w-full rounded-full bg-red-500 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+            ) : (
               <NavLink
                 to="/login"
                 onClick={() => setIsOpen(false)}
