@@ -4,14 +4,13 @@ import api from "../api/api";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/slices/authSlice";
-import { Sparkles, Mail, LockKeyhole } from "lucide-react";
-
+import { Sparkles, Mail, LockKeyhole,Eye, EyeOff,  } from "lucide-react";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -127,29 +126,41 @@ const Login = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-bold text-gray-700">
-                  Password
-                </label>
+             <div>
+  <label className="text-sm font-bold text-gray-700">
+    Password
+  </label>
 
-                <div className="relative mt-2">
-                  <LockKeyhole
-                    size={19}
-                    className="absolute left-5 top-1/2 -translate-y-1/2 text-pink-400"
-                  />
+  <div className="relative mt-2">
+    <LockKeyhole
+      size={19}
+      className="absolute left-5 top-1/2 -translate-y-1/2 text-pink-400"
+    />
 
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    className="w-full rounded-full border border-pink-100 bg-pink-50/50 py-4 pl-12 pr-5 font-medium outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    name="login-password"
-                    autoComplete="new-password"
-                    required
-                  />
-                </div>
-              </div>
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter your password"
+      className="w-full rounded-full border border-pink-100 bg-pink-50/50 py-4 pl-12 pr-14 font-medium outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      name="login-password"
+      autoComplete="current-password"
+      required
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-pink-600"
+    >
+      {showPassword ? (
+        <EyeOff size={20} />
+      ) : (
+        <Eye size={20} />
+      )}
+    </button>
+  </div>
+</div>
 
               <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 {showResend ? (

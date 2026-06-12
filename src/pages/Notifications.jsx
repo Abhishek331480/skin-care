@@ -10,17 +10,17 @@ const Notifications = () => {
   const [activeFilter, setActiveFilter] = useState("ALL");
   const filters = ["ALL", "ORDER", "COUPON", "SYSTEM", "UNREAD"];
 
-  const fetchNotifications = async () => {
-    try {
-      const res = await api.get("/notifications");
-      setNotifications(res.data.notifications);
-      setUnreadCount(res.data.unreadCount);
-    } catch (error) {
-      toast.error("Failed to fetch notifications");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchNotifications = async () => {
+  //   try {
+  //     const res = await api.get("/notifications");
+  //     setNotifications(res.data.notifications);
+  //     setUnreadCount(res.data.unreadCount);
+  //   } catch (error) {
+  //     toast.error("Failed to fetch notifications");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const markAllRead = async () => {
     try {
@@ -43,9 +43,35 @@ const Notifications = () => {
     }
   };
 
+  // useEffect(() => {
+  //   fetchNotifications();
+  // }, []);
+
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const fetchNotifications = async (showLoader = false) => {
+    try {
+      if (showLoader) setLoading(true);
+
+      const res = await api.get("/notifications");
+
+      setNotifications(res.data.notifications || []);
+      setUnreadCount(res.data.unreadCount || 0);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      if (showLoader) setLoading(false);
+    }
+  };
+
+  fetchNotifications(true);
+
+  const interval = setInterval(() => {
+    fetchNotifications(false);
+  }, 10000);
+
+  return () => clearInterval(interval);
+}, []);
+  
 
   const deleteNotification = async (id) => {
   try {

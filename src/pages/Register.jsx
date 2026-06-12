@@ -128,7 +128,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import api from "../api/api";
 import { NavLink } from "react-router-dom";
-import { Sparkles, Mail, LockKeyhole, User } from "lucide-react";
+import { Sparkles, Mail, LockKeyhole, User,Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -138,7 +138,9 @@ const Register = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [referralCode, setReferralCode] = useState("");
+ 
 
+const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -275,27 +277,39 @@ const Register = () => {
               </div>
 
               <div>
-                <label className="text-sm font-bold text-gray-700">
-                  Password
-                </label>
+  <label className="text-sm font-bold text-gray-700">
+    Password
+  </label>
 
-                <div className="relative mt-2">
-                  <LockKeyhole
-                    size={19}
-                    className="absolute left-5 top-1/2 -translate-y-1/2 text-pink-400"
-                  />
+  <div className="relative mt-2">
+    <LockKeyhole
+      size={19}
+      className="absolute left-5 top-1/2 -translate-y-1/2 text-pink-400"
+    />
 
-                  <input
-                    type="password"
-                    placeholder="Create a password"
-                    className="w-full rounded-full border border-pink-100 bg-pink-50/50 py-4 pl-12 pr-5 font-medium outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="new-password"
-                    required
-                  />
-                </div>
-              </div>
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Create a password"
+      className="w-full rounded-full border border-pink-100 bg-pink-50/50 py-4 pl-12 pr-14 font-medium outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      autoComplete="new-password"
+      required
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-pink-600 transition"
+    >
+      {showPassword ? (
+        <EyeOff size={20} />
+      ) : (
+        <Eye size={20} />
+      )}
+    </button>
+  </div>
+</div>
 
               <div>
   <label className="text-sm font-bold text-gray-700">

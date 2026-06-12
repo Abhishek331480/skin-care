@@ -41,6 +41,29 @@ const compareCount = compareItems.length;
   const profileRef = useRef(null);
 
 useEffect(() => {
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await api.get("/notifications");
+
+      const unread =
+        res.data.unreadCount ??
+        res.data.notifications?.filter((n) => !n.isRead).length ??
+        0;
+
+      setUnreadCount(unread);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  fetchUnreadCount();
+
+  const interval = setInterval(fetchUnreadCount, 5000);
+
+  return () => clearInterval(interval);
+}, []);
+
+useEffect(() => {
   const handleClickOutside = (e) => {
     if (
       profileRef.current &&
@@ -173,7 +196,7 @@ useEffect(() => {
             )}
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to="/notifications"
             className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
           >
@@ -184,7 +207,19 @@ useEffect(() => {
                 {unreadCount}
               </span>
             )}
-          </NavLink>
+          </NavLink> */}
+          <NavLink
+  to="/notifications"
+  className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
+>
+  <Bell size={20} />
+
+  {unreadCount > 0 && (
+    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+      {unreadCount}
+    </span>
+  )}
+</NavLink>
 
           {isAuthenticated ? (
             <div ref={profileRef} className="relative">
@@ -297,18 +332,17 @@ useEffect(() => {
 
   {/* Notification Bell */}
   <NavLink
-    to="/notifications"
-    onClick={() => setIsOpen(false)}
-    className="relative flex h-11 w-11 items-center justify-center rounded-full border border-pink-100 bg-white text-pink-600 shadow-sm hover:bg-pink-50 transition"
-  >
-    <Bell size={20} />
+  to="/notifications"
+  className="relative h-11 w-11 rounded-full border border-pink-100 bg-white flex items-center justify-center text-gray-700 hover:text-pink-600 hover:border-pink-200 hover:shadow-md transition"
+>
+  <Bell size={20} />
 
-    {unreadCount > 0 && (
-      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
-        {unreadCount}
-      </span>
-    )}
-  </NavLink>
+  {unreadCount > 0 && (
+    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
+      {unreadCount}
+    </span>
+  )}
+</NavLink>
 
   {/* Hamburger Menu */}
   <button
