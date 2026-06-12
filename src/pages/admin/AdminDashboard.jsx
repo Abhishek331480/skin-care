@@ -531,7 +531,7 @@ const topSellingProducts = stats?.topSellingProducts || [];
 
 
       {/* recent orders */}
-      <div className="mt-10 overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/80 p-5 md:p-7 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl">
+      {/* <div className="mt-10 overflow-hidden rounded-[2.5rem] border border-white/70 bg-white/80 p-5 md:p-7 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl">
         <div className="mb-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-sm font-bold text-pink-600">Latest Activity</p>
@@ -595,7 +595,76 @@ const topSellingProducts = stats?.topSellingProducts || [];
             ))}
           </div>
         )}
-      </div>
+      </div> */}
+      <div className="mt-6 sm:mt-10 overflow-hidden rounded-3xl md:rounded-[2.5rem] border border-white/70 bg-white/80 p-4 sm:p-5 md:p-7 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl">
+  <div className="mb-5 sm:mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <p className="text-xs sm:text-sm font-bold text-pink-600">
+        Latest Activity
+      </p>
+
+      <h2 className="mt-1 text-2xl sm:text-3xl font-black text-gray-950">
+        Recent Orders
+      </h2>
+    </div>
+
+    <span className="w-fit rounded-full border border-pink-100 bg-pink-50 px-4 py-2 text-xs sm:text-sm font-bold text-pink-700">
+      {stats?.recentOrders?.length || 0} Orders
+    </span>
+  </div>
+
+  {stats?.recentOrders?.length === 0 ? (
+    <div className="rounded-3xl border border-dashed border-pink-200 bg-pink-50/60 p-6 sm:p-10 text-center">
+      <p className="font-bold text-gray-700">No recent orders found.</p>
+      <p className="mt-1 text-sm text-gray-500">
+        Latest orders will appear here.
+      </p>
+    </div>
+  ) : (
+    <div className="space-y-4">
+      {stats?.recentOrders?.map((order) => (
+        <div
+          key={order._id}
+          className="group rounded-3xl border border-pink-100 bg-white p-4 sm:p-5 shadow-sm transition-all duration-300 hover:border-pink-200 hover:shadow-xl"
+        >
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 text-white font-black shadow-lg">
+              {(order.user?.username || "C").charAt(0).toUpperCase()}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-black text-gray-950">
+                {order.user?.username || "Customer"}
+              </p>
+
+              <p className="mt-0.5 break-all text-xs sm:text-sm text-gray-500">
+                {order.user?.email || "No email available"}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
+            <span className="rounded-2xl bg-gray-50 px-3 py-2 text-center text-sm font-black text-gray-950">
+              ₹{order.totalAmount}
+            </span>
+
+            <span className="rounded-2xl bg-gray-50 px-3 py-2 text-center text-xs sm:text-sm font-semibold text-gray-500">
+              {new Date(order.createdAt).toLocaleDateString("en-IN")}
+            </span>
+
+            <span
+              className={`col-span-2 rounded-full border px-4 py-2 text-center text-xs sm:text-sm font-black sm:col-span-1 ${getStatusClass(
+                order.orderStatus
+              )}`}
+            >
+              {order.orderStatus}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
     </section>
   );
 };
