@@ -2,7 +2,7 @@ import { useState, useEffect,useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { RiCoupon3Line } from "react-icons/ri";
-import { Menu,X,Heart,Sparkles,User,Package,LogOut,ChevronDown,Bell,Home,} from "lucide-react";
+import { Menu,X,Heart,Sparkles,User,Package,LogOut,ChevronDown,Bell,Home} from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../store/slices/authSlice";
 import api from "../api/api";
@@ -14,7 +14,7 @@ import { GitCompareArrows } from "lucide-react";
 const Navbar = () => {
   const dispatch = useDispatch();
   const [unreadCount, setUnreadCount] = useState(0);
-
+const [openAccount, setOpenAccount] = useState(false);
   //login logout code
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const isWelcomeOfferActive =
@@ -351,6 +351,66 @@ useEffect(() => {
               </NavLink>
             ))}
 
+{/* ================================ */}
+    {isAuthenticated && (
+  <div className="mt-4 rounded-3xl border border-pink-100 bg-white p-3 shadow-sm">
+    <button
+      onClick={() => setOpenAccount(!openAccount)}
+      className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+    >
+      <div className="flex items-center gap-3">
+        <User size={21} />
+        <span className="font-bold">My Account Details</span>
+      </div>
+
+      <ChevronDown
+        size={20}
+        className={`transition ${openAccount ? "rotate-180" : ""}`}
+      />
+    </button>
+
+    {openAccount && (
+      <div className="mt-2 space-y-1 border-t border-pink-100 pt-2">
+        <NavLink
+          to="/profile"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <User size={21} />
+          <span className="font-medium">My Profile</span>
+        </NavLink>
+
+        <NavLink
+          to="/my-addresses"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <Home size={21} />
+          <span className="font-medium">My Address</span>
+        </NavLink>
+
+        <NavLink
+          to="/my-orders"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <Package size={21} />
+          <span className="font-medium">My Orders</span>
+        </NavLink>
+
+        <NavLink
+          to="/my-coupons"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-4 rounded-2xl px-4 py-3 text-gray-800 hover:bg-pink-50 transition"
+        >
+          <RiCoupon3Line size={21} />
+          <span className="font-medium">My Coupons</span>
+        </NavLink>
+      </div>
+    )}
+  </div>
+)}
+{/* ============================= */}
             <div className="grid grid-cols-2 gap-3 pt-3">
   <NavLink
     to="/ai-skin-test"
@@ -360,21 +420,6 @@ useEffect(() => {
     <Sparkles size={18} />
     AI Skin Test
   </NavLink>
-
-  {/* <NavLink
-    to="/notifications"
-    onClick={() => setIsOpen(false)}
-    className="relative flex items-center justify-center gap-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700"
-  >
-    <Bell size={18} />
-    Notifications
-
-    {unreadCount > 0 && (
-      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white">
-        {unreadCount}
-      </span>
-    )}
-  </NavLink> */}
 
   <NavLink
     to="/wishlist"

@@ -57,21 +57,21 @@ const MyCoupons = () => {
           <div className="absolute -bottom-16 -left-16 h-44 w-44 rounded-full bg-rose-200/50 blur-3xl" />
 
           <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-pink-600">
-                <Sparkles size={15} />
-                Exclusive Offers
-              </div>
+            <div className="w-full">
+  <div className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-pink-600">
+    <Sparkles size={14} className="sm:h-[15px] sm:w-[15px]" />
+    Exclusive Offers
+  </div>
 
-              <h1 className="mt-4 text-3xl font-black text-gray-950 sm:text-5xl">
-                My Coupons
-              </h1>
+  <h1 className="mt-3 sm:mt-4 text-2xl sm:text-4xl lg:text-5xl font-black text-gray-950 leading-tight">
+    My Coupons
+  </h1>
 
-              <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-gray-500 sm:text-base">
-                Copy your coupon code and apply it at checkout to save more on
-                your skincare order.
-              </p>
-            </div>
+  <p className="mt-3 max-w-full sm:max-w-xl text-sm sm:text-base font-semibold leading-6 text-gray-500">
+    Copy your coupon code and apply it at checkout to save more on
+    your skincare order.
+  </p>
+</div>
 
             <div className="rounded-[1.5rem] bg-gray-950 px-6 py-5 text-white shadow-xl">
               <p className="text-sm font-bold text-pink-200">Available</p>
