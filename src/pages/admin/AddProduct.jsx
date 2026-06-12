@@ -141,19 +141,21 @@ const AddProduct = () => {
         onSubmit={handleSubmit}
         className="rounded-[2.5rem] border border-white/70 bg-white/85 p-5 md:p-8 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl"
       >
-        <div className="mb-7 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-bold text-pink-600">Product Details</p>
-            <h2 className="text-3xl font-black text-gray-950">
-              Basic Information
-            </h2>
-          </div>
+       <div className="mb-5 sm:mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <p className="text-xs sm:text-sm font-bold text-pink-600">
+      Product Details
+    </p>
 
-          <span className="rounded-full border border-pink-100 bg-pink-50 px-4 py-2 text-sm font-bold text-pink-700">
-            Max 4 Images
-          </span>
-        </div>
+    <h2 className="text-2xl sm:text-3xl font-black text-gray-950">
+      Basic Information
+    </h2>
+  </div>
 
+  <span className="w-fit rounded-full border border-pink-100 bg-pink-50 px-4 py-2 text-xs sm:text-sm font-bold text-pink-700">
+    Max 4 Images
+  </span>
+</div>
         <div className="grid md:grid-cols-2 gap-5">
           <input
             name="name"

@@ -222,7 +222,7 @@ const AdminCoupons = () => {
         })}
       </div>
 
-      <form
+      {/* <form
         onSubmit={handleCreateCoupon}
         className="mb-8 rounded-[2.5rem] border border-white/70 bg-white/85 p-5 md:p-7 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl"
       >
@@ -292,7 +292,78 @@ const AdminCoupons = () => {
             {editingCouponId ? "Update Coupon" : "Create Coupon"}
           </button>
         </div>
-      </form>
+      </form> */}
+      <form
+  onSubmit={handleCreateCoupon}
+  className="mb-6 sm:mb-8 rounded-3xl md:rounded-[2.5rem] border border-white/70 bg-white/85 p-4 sm:p-5 md:p-7 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl"
+>
+  <div className="mb-5 sm:mb-6">
+    <p className="text-xs sm:text-sm font-bold text-pink-600">
+      {editingCouponId ? "Update Coupon" : "Create Coupon"}
+    </p>
+
+    <h2 className="mt-1 text-2xl sm:text-3xl font-black text-gray-950">
+      {editingCouponId ? "Edit Existing Discount" : "Add New Discount"}
+    </h2>
+  </div>
+
+  <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <input
+      type="text"
+      name="code"
+      placeholder="Coupon Code"
+      value={formData.code}
+      onChange={handleChange}
+      className="w-full rounded-2xl border border-pink-100 bg-pink-50/40 px-4 sm:px-5 py-3.5 sm:py-4 text-sm sm:text-base font-semibold outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+      required
+    />
+
+    <select
+      name="discountType"
+      value={formData.discountType}
+      onChange={handleChange}
+      className="w-full rounded-2xl border border-pink-100 bg-pink-50/40 px-4 sm:px-5 py-3.5 sm:py-4 text-sm sm:text-base font-semibold outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+    >
+      <option value="PERCENTAGE">Percentage</option>
+      <option value="FIXED">Fixed</option>
+    </select>
+
+    <input
+      type="number"
+      name="discountValue"
+      placeholder="Discount Value"
+      value={formData.discountValue}
+      onChange={handleChange}
+      className="w-full rounded-2xl border border-pink-100 bg-pink-50/40 px-4 sm:px-5 py-3.5 sm:py-4 text-sm sm:text-base font-semibold outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+      required
+    />
+
+    <input
+      type="number"
+      name="minOrderAmount"
+      placeholder="Minimum Order Amount"
+      value={formData.minOrderAmount}
+      onChange={handleChange}
+      className="w-full rounded-2xl border border-pink-100 bg-pink-50/40 px-4 sm:px-5 py-3.5 sm:py-4 text-sm sm:text-base font-semibold outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+    />
+
+    <input
+      type="date"
+      name="expiresAt"
+      value={formData.expiresAt}
+      onChange={handleChange}
+      className="w-full rounded-2xl border border-pink-100 bg-pink-50/40 px-4 sm:px-5 py-3.5 sm:py-4 text-sm sm:text-base font-semibold outline-none transition focus:border-pink-400 focus:bg-white focus:ring-4 focus:ring-pink-100"
+    />
+
+    <button
+      type="submit"
+      className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-gray-950 via-pink-900 to-gray-950 px-5 sm:px-6 py-3.5 sm:py-4 text-sm sm:text-base font-black text-white shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl md:col-span-2 xl:col-span-1"
+    >
+      <Plus size={18} className="sm:h-5 sm:w-5" />
+      {editingCouponId ? "Update Coupon" : "Create Coupon"}
+    </button>
+  </div>
+</form>
 
       <div className="rounded-[2.5rem] border border-white/70 bg-white/85 p-5 md:p-7 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl">
         <div className="mb-6 flex items-center justify-between gap-4">
@@ -362,15 +433,7 @@ const AdminCoupons = () => {
                             EXPIRED
                           </span>
                         )}
-                         {/* <span
-      className={`rounded-full border px-3 py-1 text-xs font-black${
-        coupon.user
-          ? "bg-blue-200 text-blue-600"
-          : "bg-green-200 text-green-600"
-      }`}
-    >
-      {coupon.user ? "Personal Coupon" : "Global Coupon"}
-    </span> */}
+                        
                       </div>
 
                       <p className="mt-1 text-sm font-semibold text-gray-500">

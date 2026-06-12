@@ -256,16 +256,23 @@ const AdminOrders = () => {
               ))}
             </div>
 
-            <div className="mt-5 border-t border-pink-100 pt-4 flex justify-between">
-              <span className="font-bold">Total</span>
-              <span className="text-2xl font-bold">₹{order.totalAmount}</span>
+            <div className="mt-5 border-t border-pink-100 pt-4">
+  <div className="flex items-center justify-between">
+    <span className="font-bold text-gray-700">
+      Total
+    </span>
 
-              {order.couponCode && (
-                <p className="text-sm text-green-600">
-                  Coupon: {order.couponCode} | Discount: ₹{order.discountAmount}
-                </p>
-              )}
-            </div>
+    <span className="text-xl sm:text-2xl font-black text-gray-950">
+      ₹{order.totalAmount}
+    </span>
+  </div>
+
+  {order.couponCode && (
+    <p className="mt-2 text-xs sm:text-sm font-medium text-green-600">
+      Coupon: {order.couponCode} • Discount: ₹{order.discountAmount}
+    </p>
+  )}
+</div>
           </div>
         ))}
       </div>
