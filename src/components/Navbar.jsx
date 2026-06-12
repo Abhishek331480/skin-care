@@ -332,7 +332,7 @@ useEffect(() => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden border-t border-pink-100 bg-white/95 backdrop-blur-xl px-4 pb-5 shadow-xl">
+        <div className="lg:hidden max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain border-t border-pink-100 bg-white/95 backdrop-blur-xl px-4 pb-5 shadow-xl">
           <div className="max-w-7xl mx-auto pt-4 space-y-3">
             {navLinks.map((link) => (
               <NavLink
