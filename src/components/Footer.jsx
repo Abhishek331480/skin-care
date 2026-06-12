@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div className="text-center sm:text-left">
+          <div className=" sm:text-left">
             <h2 className="text-2xl font-black sm:text-3xl">SkinCare</h2>
 
             <p className="mx-auto mt-4 max-w-sm text-sm leading-7 text-gray-400 sm:mx-0 sm:text-base">
@@ -15,7 +15,7 @@ const Footer = () => {
               confident skin.
             </p>
 
-            <div className="mt-6 flex justify-center gap-4 sm:justify-start">
+            <div className="mt-6 flex  gap-4 sm:justify-start">
               <FaInstagram className="text-2xl text-pink-500" />
               <FaFacebookF className="text-2xl text-blue-600" />
               <FaTwitter className="text-2xl text-sky-500" />
@@ -23,7 +23,7 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div className="text-center sm:text-left">
+          <div className="sm:text-left">
             <h3 className="mb-4 text-lg font-bold sm:text-xl">
               Quick Links
             </h3>
@@ -45,7 +45,7 @@ const Footer = () => {
           </div>
 
           {/* Support */}
-          <div className="text-center sm:text-left">
+          <div className="sm:text-left">
             <h3 className="mb-4 text-lg font-bold sm:text-xl">Support</h3>
 
             <div className="flex flex-col gap-3 text-sm text-gray-400 sm:text-base">
@@ -68,7 +68,7 @@ const Footer = () => {
           </div>
 
           {/* Newsletter */}
-          <div className="text-center sm:text-left">
+          <div className=" sm:text-left">
             <h3 className="mb-4 text-lg font-bold sm:text-xl">
               Subscribe Newsletter
             </h3>
