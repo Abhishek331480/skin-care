@@ -14,7 +14,7 @@ const ProductDetails = () => {
  
   const { id } = useParams();
   const dispatch = useDispatch();
-
+  const [addingToCart, setAddingToCart] = useState(false);
   const compareItems = useSelector(
   (state) => state.compare.compareItems
 );
@@ -126,9 +126,13 @@ const isWelcomeOfferActive =
       toast.error(error.response?.data?.message || "Wishlist update failed");
     }
   };
+ 
 
   const handleAddToCart = async () => {
+     if (addingToCart) return;
+
     try {
+       setAddingToCart(true);
       const cartKey = selectedVariant
         ? `${product._id}-${selectedVariant.size}`
         : product._id;
@@ -160,7 +164,9 @@ const isWelcomeOfferActive =
       );
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add cart");
-    }
+    }finally {
+    setAddingToCart(false);
+  }
   };
 
   const handleCompare = () => {
@@ -424,20 +430,39 @@ const finalPrice = isWelcomeOfferActive
   </button>
 
   <button
-    disabled={displayStock <= 0}
-    onClick={handleAddToCart}
-    className="
-      cursor-pointer flex-1 rounded-full
-      bg-black px-7 py-4 font-semibold
-      text-white shadow-xl transition
-      hover:bg-gray-900
-      disabled:cursor-not-allowed
-      disabled:bg-gray-300
-      disabled:text-gray-500
-    "
-  >
-    {displayStock <= 0 ? "Out of Stock" : "Add to Cart"}
-  </button>
+  disabled={displayStock <= 0 || addingToCart}
+  onClick={handleAddToCart}
+  className="
+    group relative flex-1 overflow-hidden rounded-full
+    bg-gradient-to-r from-gray-950 via-black to-gray-900
+    px-7 py-4 font-black text-white
+    shadow-[0_18px_40px_rgba(0,0,0,0.25)]
+    transition-all duration-300
+    hover:-translate-y-0.5 hover:shadow-[0_22px_55px_rgba(0,0,0,0.35)]
+    active:scale-95
+    disabled:translate-y-0 disabled:cursor-not-allowed
+    disabled:bg-none disabled:bg-gray-300
+    disabled:text-gray-500 disabled:shadow-none
+  "
+>
+  <span className="absolute inset-0 bg-white/10 opacity-0 transition group-hover:opacity-100" />
+
+  <span className="relative flex items-center justify-center gap-2">
+    {displayStock <= 0 ? (
+      "Out of Stock"
+    ) : addingToCart ? (
+      <>
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/80 border-t-transparent" />
+        Adding...
+      </>
+    ) : (
+      <>
+        Add to Cart
+        <span className="transition group-hover:translate-x-1">→</span>
+      </>
+    )}
+  </span>
+</button>
 </div>
         </div>
       </div>
